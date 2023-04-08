@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -44,6 +46,25 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 1)]
     private ?string $sexe = null;
+
+    #[ORM\ManyToOne(inversedBy: 'userId')]
+    private ?Arbre $arbre = null;
+
+    #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'users')]
+    private ?self $parent1 = null;
+
+    #[ORM\OneToMany(mappedBy: 'parent1', targetEntity: self::class)]
+    private Collection $users;
+
+    #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'users')]
+    private ?self $parent2 = null;
+
+    public function __construct()
+    {
+        $this->parent1Id = new ArrayCollection();
+        $this->parent2Id = new ArrayCollection();
+        $this->users = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -173,6 +194,69 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setSexe(string $sexe): self
     {
         $this->sexe = $sexe;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, self>
+     */
+    public function getUsers(): Collection
+    {
+        return $this->users;
+    }
+
+    public function addUser(self $user): self
+    {
+        if (!$this->users->contains($user)) {
+            $this->users->add($user);
+            $user->addParent2Id($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUser(self $user): self
+    {
+        if ($this->users->removeElement($user)) {
+            $user->removeParent2Id($this);
+        }
+
+        return $this;
+    }
+
+    public function getArbre(): ?Arbre
+    {
+        return $this->arbre;
+    }
+
+    public function setArbre(?Arbre $arbre): self
+    {
+        $this->arbre = $arbre;
+
+        return $this;
+    }
+
+    public function getParent1(): ?self
+    {
+        return $this->parent1;
+    }
+
+    public function setParent1(?self $parent1): self
+    {
+        $this->parent1 = $parent1;
+
+        return $this;
+    }
+
+    public function getParent2(): ?self
+    {
+        return $this->parent2;
+    }
+
+    public function setParent2(?self $parent2): self
+    {
+        $this->parent2 = $parent2;
 
         return $this;
     }
