@@ -57,6 +57,86 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->save($user, true);
     }
 
+
+    public function getArbreGenealogique($userId)
+    {
+        $entityManager = $this->getEntityManager();
+    
+        // Récupération de l'utilisateur initial
+        $user = $entityManager->getRepository(User::class)->findOneBy(array('id' => $userId));
+    
+        if (!$user) {
+            return null;
+        }
+    
+        $arbreGenealogique = array();
+    
+        // Ajout de l'utilisateur initial à l'arbre généalogique
+        $arbreGenealogique[] = $user;
+    
+        // Récupération des deux parents
+        $parents = array($user->getParent1(), $user->getParent2());
+    
+        foreach ($parents as $parent) {
+            if ($parent) {
+                $parentEntity = $entityManager->getRepository(User::class)->findOneBy(array('id' => $parent));
+                if ($parentEntity) {
+                    // Ajout du parent à l'arbre généalogique
+                    $arbreGenealogique[] = $parentEntity;
+    
+                    // Récupération des deux grands-parents
+                    $grandsParents = array($parentEntity->getParent1(), $parentEntity->getParent2());
+    
+                    foreach ($grandsParents as $grandParent) {
+                        if ($grandParent) {
+                            $grandParentEntity = $entityManager->getRepository(User::class)->findOneBy(array('id' => $grandParent));
+                            if ($grandParentEntity) {
+                                // Ajout du grand-parent à l'arbre généalogique
+                                $arbreGenealogique[] = $grandParentEntity;
+    
+                                // Récupération des arrières grands-parents, etc.
+                                $arriereGrandsParents = array($grandParentEntity->getParent1(), $grandParentEntity->getParent2());
+    
+                                foreach ($arriereGrandsParents as $arriereGrandParent) {
+                                    if ($arriereGrandParent) {
+                                        $arriereGrandParentEntity = $entityManager->getRepository(User::class)->findOneBy(array('id' => $arriereGrandParent));
+                                        if ($arriereGrandParentEntity) {
+                                            $arbreGenealogique[] = $arriereGrandParentEntity;
+    
+                                            // Récupération des arrières arrières grands-parents, etc.
+                                            while ($arriereGrandParentEntity->getParent1() || $arriereGrandParentEntity->getParent2()) {
+                                                if ($arriereGrandParentEntity->getParent1()) {
+                                                    $arriereGrandParentEntity = $entityManager->getRepository(User::class)->findOneBy(array('id' => $arriereGrandParentEntity->getParent1()));
+    
+                                                    if ($arriereGrandParentEntity) {
+                                                        $arbreGenealogique[] = $arriereGrandParentEntity;
+                                                    }
+                                                }
+    
+                                                if ($arriereGrandParentEntity->getParent2()) {
+                                                    $arriereGrandParentEntity = $entityManager->getRepository(User::class)->findOneBy(array('id' => $arriereGrandParentEntity->getParent2()));
+    
+                                                    if ($arriereGrandParentEntity) {
+                                                        $arbreGenealogique[] = $arriereGrandParentEntity;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    
+        return $arbreGenealogique;
+    }
+    
+    
+
+
 //    /**
 //     * @return User[] Returns an array of User objects
 //     */

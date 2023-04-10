@@ -261,4 +261,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    
+
+    public function getParents()
+    {
+        $parents = array();
+
+        if ($this->getParent1()) {
+            $parents[] = $this->getParent1();
+        }
+
+        if ($this->getParent2()) {
+            $parents[] = $this->getParent2();
+        }
+
+        return $parents;
+    }
+
 }
