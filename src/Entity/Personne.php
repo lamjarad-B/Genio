@@ -31,12 +31,16 @@ class Personne
     #[ORM\Column(length: 1)]
     private ?string $sexe = null;
 
-    #[ORM\ManyToMany(targetEntity: Relation::class, mappedBy: 'personnes')]
-    private Collection $relations;
+    #[ORM\OneToMany(mappedBy: 'personne1', targetEntity: Relation::class, orphanRemoval: true)]
+    private Collection $relationsPersonne1;
+
+    #[ORM\OneToMany(mappedBy: 'personne2', targetEntity: Relation::class, orphanRemoval: true)]
+    private Collection $relationsPersonne2;
 
     public function __construct()
     {
-        $this->relations = new ArrayCollection();
+        $this->relationsPersonne1 = new ArrayCollection();
+        $this->relationsPersonne2 = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -107,25 +111,58 @@ class Personne
     /**
      * @return Collection<int, Relation>
      */
-    public function getRelations(): Collection
+    public function getRelationsPersonne1(): Collection
     {
-        return $this->relations;
+        return $this->relationsPersonne1;
     }
 
-    public function addRelation(Relation $relation): self
+    public function addRelationPersonne1(Relation $relation): self
     {
-        if (!$this->relations->contains($relation)) {
-            $this->relations->add($relation);
-            $relation->addPersonne($this);
+        if (!$this->relationsPersonne1->contains($relation)) {
+            $this->relationsPersonne1->add($relation);
+            $relation->setPersonne1($this);
         }
 
         return $this;
     }
 
-    public function removeRelation(Relation $relation): self
+    public function removeRelationPersonne1(Relation $relation): self
     {
-        if ($this->relations->removeElement($relation)) {
-            $relation->removePersonne($this);
+        if ($this->relationsPersonne1->removeElement($relation)) {
+            // set the owning side to null (unless already changed)
+            if ($relation->getPersonne1() === $this) {
+                $relation->setPersonne1(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Relation>
+     */
+    public function getRelationsPersonne2(): Collection
+    {
+        return $this->relationsPersonne2;
+    }
+
+    public function addRelationPersonne2(Relation $relation): self
+    {
+        if (!$this->relationsPersonne2->contains($relation)) {
+            $this->relationsPersonne2->add($relation);
+            $relation->setPersonne2($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRelationPersonne2(Relation $relation): self
+    {
+        if ($this->relationsPersonne2->removeElement($relation)) {
+            // set the owning side to null (unless already changed)
+            if ($relation->getPersonne2() === $this) {
+                $relation->setPersonne2(null);
+            }
         }
 
         return $this;

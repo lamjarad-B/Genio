@@ -3,8 +3,6 @@
 namespace App\Entity;
 
 use App\Repository\RelationRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: RelationRepository::class)]
@@ -15,43 +13,43 @@ class Relation
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToMany(targetEntity: Personne::class, inversedBy: 'relations')]
-    private Collection $personnes;
+    #[ORM\ManyToOne(inversedBy: 'relations')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Personne $personne1 = null;
 
-    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    #[ORM\ManyToOne(inversedBy: 'relations')]
     #[ORM\JoinColumn(nullable: false)]
     private ?TypeRelation $relation_type = null;
 
-    public function __construct()
-    {
-        $this->personnes = new ArrayCollection();
-    }
+    #[ORM\ManyToOne(inversedBy: 'relations')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Personne $personne2 = null;
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    /**
-     * @return Collection<int, Personne>
-     */
-    public function getPersonnes(): Collection
+    public function getPersonne1(): ?Personne
     {
-        return $this->personnes;
+        return $this->personne1;
     }
 
-    public function addPersonne(Personne $personne): self
+    public function setPersonne1(?Personne $personne1): self
     {
-        if (!$this->personnes->contains($personne)) {
-            $this->personnes->add($personne);
-        }
+        $this->personne1 = $personne1;
 
         return $this;
     }
 
-    public function removePersonne(Personne $personne): self
+    public function getPersonne2(): ?Personne
     {
-        $this->personnes->removeElement($personne);
+        return $this->personne2;
+    }
+
+    public function setPersonne2(?Personne $personne2): self
+    {
+        $this->personne2 = $personne2;
 
         return $this;
     }
@@ -61,7 +59,7 @@ class Relation
         return $this->relation_type;
     }
 
-    public function setRelationType(TypeRelation $relation_type): self
+    public function setRelationType(?TypeRelation $relation_type): self
     {
         $this->relation_type = $relation_type;
 
