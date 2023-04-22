@@ -35,20 +35,22 @@ class SearchPersonType extends AbstractType
             ->add('date_naissance', TextType::class, ['label'=> 'Date de naissance',
             'required' => false])
 
-            // ->add('nom', TextType::class, ['label'=> 'Nom du conjoint(e)',
-            // 'required' => false,
-            // 'constraints' => new length([
-            // 'min' => 2,
-            // 'max' => 30
-            // ]),
-            // 'attr' => ['placeholder' => 'Merci de renseigner le nom du conjoint(e)']])
-            // ->add('prenom', TextType::class, ['label'=> 'Prénom du conjoint(e)',
-            // 'required' => false,
-            // 'constraints' => new length([
-            // 'min' => 2,
-            // 'max' => 30
-            // ]),
-            // 'attr' => ['placeholder' => 'Merci de renseigner le prénom du conjoint(e)']])
+            ->add('nomConjoint', TextType::class, ['label'=> 'Nom du conjoint(e)',
+            'required' => false,
+            'mapped' => false,
+            'constraints' => new length([
+            'min' => 2,
+            'max' => 30
+            ]),
+            'attr' => ['placeholder' => 'Merci de renseigner le nom du conjoint(e)']])
+            ->add('prenomConjoint', TextType::class, ['label'=> 'Prénom du conjoint(e)',
+            'required' => false,
+            'mapped' => false,
+            'constraints' => new length([
+            'min' => 2,
+            'max' => 30
+            ]),
+            'attr' => ['placeholder' => 'Merci de renseigner le prénom du conjoint(e)']])
             // ->add('date_deces')
             // ->add('sexe')
             ->add('submit', SubmitType::class, ['label'=> "Rechercher"])

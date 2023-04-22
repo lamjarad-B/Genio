@@ -1,8 +1,8 @@
 {% extends 'base.html.twig' %}
 {% block content %}
     <h1>Résultat de la recherche</h1>
-    {# {{ dump () }} #}
+    {# {{ dump (data) }} #}
     {% for personne in personnes %}
-        {{ personne.nom }} <br>
+        {{ personne.nom}} {{ personne.prenom }} <br>
     {% endfor %}
 {% endblock %}

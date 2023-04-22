@@ -13,41 +13,44 @@ class PersonneRepository extends ServiceEntityRepository
         parent::__construct($registry, Personne::class);
     }
 
-    public function findBySearchCriteria(array $criteria)
+    public function findBySearchCriteria(object $criteria, ?string $nomConjoint, ?string $prenomConjoint, ?int $limit = null)
     {
         $qb = $this->createQueryBuilder('p');
 
-        if (isset($criteria['nom'])) {
+        if ($criteria->getNom() !== null) {
             $qb->andWhere('p.nom LIKE :nom')
-                ->setParameter('nom', '%' . $criteria['nom'] . '%');
+                ->setParameter('nom', '%' . $criteria->getNom() . '%');
         }
-    
-        if (isset($criteria['prenom'])) {
+
+        if ($criteria->getPrenom() !== null) {
             $qb->andWhere('p.prenom LIKE :prenom')
-                ->setParameter('prenom', '%' . $criteria['prenom'] . '%');
+                ->setParameter('prenom', '%' . $criteria->getPrenom() . '%');
         }
-    
-        if (isset($criteria['date_naissance'])) {
+
+        if ($criteria->getDateNaissance() !== null) {
             $qb->andWhere('p.date_naissance = :date_naissance')
-                ->setParameter('date_naissance', $criteria['date_naissance']);
+                ->setParameter('date_naissance', $criteria->getDateNaissance());
         }
 
-        // if (isset($criteria['nomConjoint'])) {
-        //     $qb->leftJoin('p.relationsPersonne1', 'r')
-        //         ->leftJoin('r.personne2', 'p2')
-        //         ->orWhere('p2.nom LIKE :nomConjoint')
-        //         ->setParameter('nomConjoint', '%' . $criteria['nomConjoint'] . '%');
-        // }
+        if ($nomConjoint !== null) {
+            $qb->leftJoin('p.relationsPersonne1', 'r')
+                ->leftJoin('r.personne2', 'p2')
+                ->orWhere('p2.nom LIKE :nomConjoint')
+                ->setParameter('nomConjoint', '%' . $nomConjoint . '%');
+        }
 
-        // if (isset($criteria['prenomConjoint'])) {
-        //     $qb->leftJoin('p.relationsPersonne1', 'r')
-        //         ->leftJoin('r.personne2', 'p2')
-        //         ->orWhere('p2.prenom LIKE :prenomConjoint')
-        //         ->setParameter('prenomConjoint', '%' . $criteria['prenomConjoint'] . '%');
-        // }
+        if ($prenomConjoint !== null) {
+            $qb->leftJoin('p.relationsPersonne1', 'r')
+                ->leftJoin('r.personne2', 'p2')
+                ->orWhere('p2.prenom LIKE :prenomConjoint')
+                ->setParameter('prenomConjoint', '%' . $prenomConjoint . '%');
+        }
+
+        if ($limit !== null) {
+            $qb->setMaxResults($limit);
+        }
 
         return $qb->getQuery()->getResult();
     }
-
 
 }

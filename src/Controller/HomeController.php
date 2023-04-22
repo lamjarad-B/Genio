@@ -43,8 +43,11 @@ class HomeController extends AbstractController
             // Récupère les données soumises par l'utilisateur
             $data = $form->getData();
 
+            $nomConjoint = $request->request->get('nomConjoint');
+            $prenomConjoint = $request->request->get('prenomConjoint');
+
             // Récupère les personnes correspondantes dans la base de données
-            $personnes = $this->entityManager->getRepository(Personne::class)->findBySearchCriteria([$data]);
+            $personnes = $this->entityManager->getRepository(Personne::class)->findBySearchCriteria($data, $nomConjoint, $prenomConjoint);
 
             // Retourne le résultat de la recherche
             return $this->render('home/search.html.twig', [
