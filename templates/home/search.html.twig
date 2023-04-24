@@ -2,7 +2,9 @@
 {% block content %}
     <h1>Résultat de la recherche</h1>
     {# {{ dump (data) }} #}
-    {% for personne in personnes %}
-        {{ personne.nom}} {{ personne.prenom }} <br>
-    {% endfor %}
+    <ul>
+        {% for personne in personnes %}
+            <li><a href="{{ path('app_arbre', { 'id': personne.id}) }}"> {{ personne.nom}} {{ personne.prenom }} {{ personne.id }}</li></a>
+        {% endfor %}
+    </ul>
 {% endblock %}

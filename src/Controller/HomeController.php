@@ -3,6 +3,7 @@ namespace App\Controller;
 
 use App\Entity\Personne;
 use App\Form\SearchPersonType;
+use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -28,7 +29,7 @@ class HomeController extends AbstractController
     // #[Route('/search', name: 'search_person')]
 
     #[Route('/home', name: 'app_home')]
-    public function searchPerson(Request $request): Response
+    public function index(Request $request): Response
     {
         // Crée un objet Personne vide pour l'utiliser pour créer le formulaire.
         $personne = new Personne();
@@ -48,16 +49,24 @@ class HomeController extends AbstractController
 
             // Récupère les personnes correspondantes dans la base de données
             $personnes = $this->entityManager->getRepository(Personne::class)->findBySearchCriteria($data, $nomConjoint, $prenomConjoint);
+           
 
             // Retourne le résultat de la recherche
             return $this->render('home/search.html.twig', [
                 'personnes' => $personnes,
             ]);
+            
         }
+        
 
         return $this->render('home/index.html.twig',
         [
             'form' => $form->createView() // appeler la variable $form et creer la view de ce formulaire
         ]);
+
+        
+        
     }
+
+    
 }
