@@ -21,9 +21,9 @@ class ArbreRepository extends ServiceEntityRepository
         $queryBuilder = $connection->createQueryBuilder();
         
         $queryBuilder->select('p.id', 'p.nom', 'p.prenom', 'p.date_naissance', 'p.date_deces', 'p.sexe')
-                    ->from(Personne::class, 'p')
-                    ->join('p', Relation::class, 'r', '(p.id = r.personne1_id OR p.id = r.personne2_id)')
-                    ->join('r', 'Type_Relation', 't', 'r.relation_type_id = t.id')
+                    ->from('personne', 'p')
+                    ->join('p', 'relation', 'r', '(p.id = r.personne1_id OR p.id = r.personne2_id)')
+                    ->join('r', 'type_relation', 't', 'r.relation_type_id = t.id')
                     ->where('t.nom_relation IN (:pere, :mere)')
                     ->andWhere('p.id <> :personId')
                     ->setParameter('pere', 'père')
@@ -31,17 +31,6 @@ class ArbreRepository extends ServiceEntityRepository
                     ->setParameter('personId', $personId);
         
         $results = $queryBuilder->executeQuery()->fetchAllAssociative();
-
-        // $conn = $this->getEntityManager()->getConnection();
-        
-        // $query = $conn->prepare("SELECT p.id, p.nom, p.prenom, p.date_naissance, p.date_deces, p.sexe 
-        // FROM Personne p 
-        // INNER JOIN Relation r ON p.id = r.personne1_id OR p.id = r.personne2_id 
-        // INNER JOIN Type_Relation t ON r.relation_type_id = t.id 
-        // WHERE t.nom_relation IN ('père', 'mère') AND p.id <> :personId");
-
-        // $queryEx = $query->executeQuery(["personId" => $personId]);
-        // $results = $queryEx->fetchAllAssociative();
         
         $ancestors = array();
         
