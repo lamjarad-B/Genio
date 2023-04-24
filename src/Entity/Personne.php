@@ -23,10 +23,10 @@ class Personne
     private ?string $prenom = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
-    private ?\DateTimeInterface $date_naissance = null;
+    private ?\DateTimeInterface $dateNaissance = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
-    private ?\DateTimeInterface $date_deces = null;
+    private ?\DateTimeInterface $dateDeces = null;
 
     #[ORM\Column(length: 1)]
     private ?string $sexe = null;
@@ -74,24 +74,24 @@ class Personne
 
     public function getDateNaissance(): ?\DateTimeInterface
     {
-        return $this->date_naissance;
+        return $this->dateNaissance;
     }
 
-    public function setDateNaissance(\DateTimeInterface $date_naissance): self
+    public function setDateNaissance(\DateTimeInterface $dateNaissance): self
     {
-        $this->date_naissance = $date_naissance;
+        $this->dateNaissance = $dateNaissance;
 
         return $this;
     }
 
     public function getDateDeces(): ?\DateTimeInterface
     {
-        return $this->date_deces;
+        return $this->dateDeces;
     }
 
-    public function setDateDeces(?\DateTimeInterface $date_deces): self
+    public function setDateDeces(?\DateTimeInterface $dateDeces): self
     {
-        $this->date_deces = $date_deces;
+        $this->dateDeces = $dateDeces;
 
         return $this;
     }

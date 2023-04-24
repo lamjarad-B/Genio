@@ -39,8 +39,8 @@ class ArbreRepository extends ServiceEntityRepository
                 'id' => $result['id'],
                 'nom' => $result['nom'],
                 'prenom' => $result['prenom'],
-                'date_naissance' => $result['date_naissance'],
-                'date_deces' => $result['date_deces'],
+                'dateNaissance' => $result['date_naissance'],
+                'dateDeces' => $result['date_deces'],
                 'sexe' => $result['sexe']
             );
             array_push($ancestors, $person);

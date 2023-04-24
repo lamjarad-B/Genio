@@ -2,10 +2,10 @@
 {% block content %}
     <h1>{{ personne.nom }} {{ personne.prenom }}</h1>
 
-    <p>Date de naissance : {{ personne.date_naissance|date('d/m/Y') }}</p>
+    <p>Date de naissance : {{ personne.dateNaissance|date('d/m/Y') }}</p>
 
-    {% if personne.date_deces is not null %}
-        <p>Date de décès : {{ personne.date_deces|date('d/m/Y') }}</p>
+    {% if personne.dateDeces is not null %}
+        <p>Date de décès : {{ personne.dateDeces|date('d/m/Y') }}</p>
     {% endif %}
 
     <h2>Ancêtres</h2>
@@ -15,7 +15,7 @@
     {% else %}
         <ul>
             {% for ancestor in ancestors %}
-                <li>{{ ancestor.nom }} {{ ancestor.prenom }} ({{ ancestor.date_naissance|date('d/m/Y') }} - {% if ancestor.date_deces is not null %}{{ ancestor.date_deces|date('d/m/Y') }}{% else %}{{ "Aujourd'hui"|date('d/m/Y') }}{% endif %})</li>
+                <li>{{ ancestor.nom }} {{ ancestor.prenom }} ({{ ancestor.dateNaissance|date('d/m/Y') }} - {% if ancestor.dateDeces is not null %}{{ ancestor.dateDeces|date('d/m/Y') }}{% else %}{{ "now"|date('d/m/Y') }}{% endif %})</li>
             {% endfor %}
         </ul>
     {% endif %}
