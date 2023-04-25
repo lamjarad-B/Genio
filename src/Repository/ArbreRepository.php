@@ -40,7 +40,8 @@ class ArbreRepository extends ServiceEntityRepository
         $statement = $connection->prepare($sql);
         $results= $statement->executeQuery(['personId' => $personId, "pere" => "père", "mere" => "mère"]);
 
-        return $results->fetchAllAssociative();
+        $tmp = $results->fetchAllAssociative();
+        return $tmp;
     }
 
 
