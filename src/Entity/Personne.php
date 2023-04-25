@@ -22,11 +22,6 @@ class Personne
     #[ORM\Column(length: 50)]
     private ?string $prenom = null;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE)]
-    private ?\DateTimeInterface $dateNaissance = null;
-
-    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
-    private ?\DateTimeInterface $dateDeces = null;
 
     #[ORM\Column(length: 1)]
     private ?string $sexe = null;
@@ -36,6 +31,12 @@ class Personne
 
     #[ORM\OneToMany(mappedBy: 'personne2', targetEntity: Relation::class, orphanRemoval: true)]
     private Collection $relationsPersonne2;
+
+    #[ORM\Column(type: Types::DATE_MUTABLE)]
+    private ?\DateTimeInterface $dateNaissance = null;
+
+    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $dateDeces = null;
 
     public function __construct()
     {
@@ -68,30 +69,6 @@ class Personne
     public function setPrenom(string $prenom): self
     {
         $this->prenom = $prenom;
-
-        return $this;
-    }
-
-    public function getDateNaissance(): ?\DateTimeInterface
-    {
-        return $this->dateNaissance;
-    }
-
-    public function setDateNaissance(\DateTimeInterface $dateNaissance): self
-    {
-        $this->dateNaissance = $dateNaissance;
-
-        return $this;
-    }
-
-    public function getDateDeces(): ?\DateTimeInterface
-    {
-        return $this->dateDeces;
-    }
-
-    public function setDateDeces(?\DateTimeInterface $dateDeces): self
-    {
-        $this->dateDeces = $dateDeces;
 
         return $this;
     }
@@ -164,6 +141,30 @@ class Personne
                 $relation->setPersonne2(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getDateNaissance(): ?\DateTimeInterface
+    {
+        return $this->dateNaissance;
+    }
+
+    public function setDateNaissance(\DateTimeInterface $dateNaissance): self
+    {
+        $this->dateNaissance = $dateNaissance;
+
+        return $this;
+    }
+
+    public function getDateDeces(): ?\DateTimeInterface
+    {
+        return $this->dateDeces;
+    }
+
+    public function setDateDeces(?\DateTimeInterface $dateDeces): self
+    {
+        $this->dateDeces = $dateDeces;
 
         return $this;
     }

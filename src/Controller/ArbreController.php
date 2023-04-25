@@ -27,8 +27,8 @@ class ArbreController extends AbstractController
         $personId = $request->get('id');
         $personne = $personneRepository->find($personId);
         
-        $ancestors = $arbreRepository->getAncestors($connection, $personId);
-        //dd($personne);
+        $ancestors = $arbreRepository->getAncestors($personId);
+        //dd($ancestors);
         
         return $this->render('arbre/index.html.twig', [
             'personne' => $personne,

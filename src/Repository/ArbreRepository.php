@@ -16,36 +16,32 @@ class ArbreRepository extends ServiceEntityRepository
         parent::__construct($registry, Personne::class);
     }
 
-    public function getAncestors(Connection $connection, int $personId): array
+    public function getAncestors( int $personId): array
     {
-        $queryBuilder = $connection->createQueryBuilder();
-        
-        $queryBuilder->select('p.id', 'p.nom', 'p.prenom', 'p.date_naissance', 'p.date_deces', 'p.sexe')
-                    ->from('personne', 'p')
-                    ->join('p', 'relation', 'r', '(p.id = r.personne1_id OR p.id = r.personne2_id)')
-                    ->join('r', 'type_relation', 't', 'r.relation_type_id = t.id')
-                    ->where('t.nom_relation IN (:pere, :mere)')
-                    ->andWhere('p.id <> :personId')
-                    ->setParameter('pere', 'père')
-                    ->setParameter('mere', 'mère')
-                    ->setParameter('personId', $personId);
-        
-        $results = $queryBuilder->executeQuery()->fetchAllAssociative();
-        
-        $ancestors = array();
-        
-        foreach ($results as $result) {
-            $person = array(
-                'id' => $result['id'],
-                'nom' => $result['nom'],
-                'prenom' => $result['prenom'],
-                'dateNaissance' => $result['date_naissance'],
-                'dateDeces' => $result['date_deces'],
-                'sexe' => $result['sexe']
-            );
-            array_push($ancestors, $person);
-        }
-        
-        return $ancestors;
+        $connection = $this->getEntityManager()->getConnection();
+        $sql = 'SELECT DISTINCT p.id, p.nom, p.prenom, p.date_naissance, p.date_deces, p.sexe
+                FROM personne p
+                LEFT JOIN relation r ON p.id IN (r.personne1_id, r.personne2_id) AND r.relation_type_id IN (SELECT id FROM type_relation WHERE nom_relation IN (:pere, :mere))
+                WHERE p.id = :personId
+                OR p.id IN (
+                    SELECT personne1_id
+                    FROM relation
+                    WHERE personne2_id = :personId
+                    AND relation_type_id IN (SELECT id FROM type_relation WHERE nom_relation IN (:pere, :mere))
+                )
+                OR p.id IN (
+                    SELECT personne2_id
+                    FROM relation
+                    WHERE personne1_id = :personId
+                    AND relation_type_id IN (SELECT id FROM type_relation WHERE nom_relation IN (:pere, :mere))
+                )
+                AND p.sexe IN (:pere, :mere)';
+
+        $statement = $connection->prepare($sql);
+        $results= $statement->executeQuery(['personId' => $personId, "pere" => "père", "mere" => "mère"]);
+
+        return $results->fetchAllAssociative();
     }
+
+
 }
