@@ -16,33 +16,42 @@ class ArbreRepository extends ServiceEntityRepository
         parent::__construct($registry, Personne::class);
     }
 
-    public function getAncestors( int $personId): array
-    {
-        $connection = $this->getEntityManager()->getConnection();
-        $sql = 'SELECT DISTINCT p.id, p.nom, p.prenom, p.date_naissance, p.date_deces, p.sexe
-                FROM personne p
-                LEFT JOIN relation r ON p.id IN (r.personne1_id, r.personne2_id) AND r.relation_type_id IN (SELECT id FROM type_relation WHERE nom_relation IN (:pere, :mere))
-                WHERE p.id = :personId
-                OR p.id IN (
-                    SELECT personne1_id
-                    FROM relation
-                    WHERE personne2_id = :personId
-                    AND relation_type_id IN (SELECT id FROM type_relation WHERE nom_relation IN (:pere, :mere))
-                )
-                OR p.id IN (
-                    SELECT personne2_id
-                    FROM relation
-                    WHERE personne1_id = :personId
-                    AND relation_type_id IN (SELECT id FROM type_relation WHERE nom_relation IN (:pere, :mere))
-                )
-                AND p.sexe IN (:pere, :mere)';
+    public function getAncestors(int $personId, array &$ancestors = []): array
+{
+    $connection = $this->getEntityManager()->getConnection();
+    $sql = 'SELECT DISTINCT p.id, p.nom, p.prenom, p.date_naissance, p.date_deces, p.sexe
+            FROM personne p
+            LEFT JOIN relation r ON p.id IN (r.personne1_id, r.personne2_id) AND r.relation_type_id IN (SELECT id FROM type_relation WHERE nom_relation IN (:pere, :mere))
+            WHERE p.id = :personId
+            OR p.id IN (
+                SELECT personne1_id
+                FROM relation
+                WHERE personne2_id = :personId
+                AND relation_type_id IN (SELECT id FROM type_relation WHERE nom_relation IN (:pere, :mere))
+            )
+            OR p.id IN (
+                SELECT personne2_id
+                FROM relation
+                WHERE personne1_id = :personId
+                AND relation_type_id IN (SELECT id FROM type_relation WHERE nom_relation IN (:pere, :mere))
+            )
+            AND p.sexe IN (:pere, :mere)';
 
-        $statement = $connection->prepare($sql);
-        $results= $statement->executeQuery(['personId' => $personId, "pere" => "père", "mere" => "mère"]);
+    $statement = $connection->prepare($sql);
+    $results= $statement->executeQuery(['personId' => $personId, "pere" => "père", "mere" => "mère"]);
 
-        $tmp = $results->fetchAllAssociative();
-        return $tmp;
+    $tmp = $results->fetchAllAssociative();
+
+    foreach ($tmp as $ancestor) {
+        if (!in_array($ancestor, $ancestors)) {
+            $ancestors[] = $ancestor;
+            $this->getAncestors($ancestor['id'], $ancestors);
+        }
     }
+
+    return $ancestors;
+}
+
 
 
 }
