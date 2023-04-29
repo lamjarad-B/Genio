@@ -1,0 +1,25 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>Afficher gedcom</title>
+    <meta charset="utf-8">
+</head>
+<body>
+<div id="page">
+    <header>
+        <h2>Affichage arbre généalogique</h2>
+        <p> Ici vous vérez l'arbre généalogique que vous avez importé. </p>
+        </br>
+    </header>
+
+    <table>
+        <tr><td></td></tr>
+    </table>
+
+    {% for line in nameLines %}
+        <p>{{ line|split(' ')|last|trim|replace({'/': ' '}) }}</p>
+    {% endfor %}
+
+</div>
+</body>
+</html>
