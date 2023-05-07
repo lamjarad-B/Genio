@@ -5,9 +5,20 @@ use Symfony\Component\HttpFoundation\Request;
 use App\Service\FileUploader;
 use App\Form\FileUploadType;
 use Symfony\Component\Routing\Annotation\Route;
+use DateTime;
+use App\Entity\Personne;
+use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\PersonneRepository;
 
 class GedcomImportController extends AbstractController
 {
+    private $entityManager;
+
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        $this->entityManager = $entityManager;
+    }
+    
     #[Route('/import', name: 'app_import')]
     public function excelCommunesAction(Request $request, FileUploader $file_uploader)
     {
@@ -41,6 +52,7 @@ class GedcomImportController extends AbstractController
     #[Route('/affiche', name : 'app_affiche')]
 public function afficherGedcom(){
 
+
         $monFichier = ('uploads/charlie.txt');
         $buffer=[];
         $nameLines= [];
@@ -52,12 +64,275 @@ public function afficherGedcom(){
                     $buffer[] = fgets($handle);
                    // var_dump($buffer);
                 }
-                foreach ($buffer as $line => $test){
+               /* foreach ($buffer as $line => $test){
                     if(strpos($test, 'NAME')){
                         $nameLines[] = $test;
                     }
 
+
+                }*/
+                //-----------------------------INITIALISATION---------------------
+
+                $firstNames = []; // initialisez votre tableau qui contiendra les prénoms
+                $lastNames = []; // initialisez votre tableau qui contiendra les noms de famille
+                $sexe = [];
+                $naissance = [];
+                $birtFound = false;
+                $deathFound = false;
+                $mort=[];
+                $mortFormatee = [];
+                $naissanceFormatee = [];
+                $id = [];
+                $dateNaissanceFormatee=null;
+                $dateMortFormatee=null;
+                $firstDateAfterBirt = null;
+                $dateNaissance = '';
+                $dateMort = '';
+                $indi=0;
+                $essaie = false;
+                $dateFound = false;
+
+
+
+                //----------------------DEBUT PARSE----------------------------
+
+                foreach ($buffer as $line => $test){
+                    if(strpos($test, 'INDI')){
+                        $id[] = trim(str_replace(['INDI', '@'], '', preg_replace('/^0([^0\s]*)/', '$1', $test)));
+                        }
+
+                    if(strpos($test, 'NAME')){
+                        $name = trim(str_replace(['NAME', "\n", "\r", 1], '', $test)); // supprime les espaces, les sauts de ligne et les caractères inutiles
+                        $nameParts = explode('/', $name);
+                        if (count($nameParts) > 1) {
+                            $firstNames[] = $nameParts[0];
+                            $lastNames[] = $nameParts[1];
+                        }
+                    }
+                    if(strpos($test, 'SEX')){
+                        $sexe[] = trim(str_replace(['SEX', "\n", "\r", " ", "1"], '', $test));
+                    }
+
+//                    ---------------------------TROUVER DATE NAISSANCE ---------------------------------------
+
+                    if(strpos($test, 'BIRT')){
+                        $birtFound = true;
+                    }
+//                    var_dump($birtFound);
+                    if($birtFound && strpos($test, 'DATE')){
+
+                        $naissance[] = trim(str_replace(['2 DATE', "\n", "\r"],'',$test));
+                        //Convertie l'Array $naissance en String
+                        $dateNaissanceStr = end($naissance);
+
+
+                        // Vérifier si la variable $naissance contient au moins l'un des mots recherchés
+                        $mois = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+                        $motTrouve = false;
+                        $joursTrouve = false;
+
+                        $words = explode(' ', $dateNaissanceStr);
+                        $premierMot = $words[0];
+
+                        foreach ($mois as $mot) {
+                            if (strpos($dateNaissanceStr, $mot) !== false) {
+                                $motTrouve = true;
+                                if ($premierMot === $mot) {
+                                    $joursTrouve = true;
+                                    break;
+                                }
+                                break;
+                            }
+
+                        }
+
+                        if ($joursTrouve) {
+                            $dateNaissanceStr = '01 ' . $dateNaissanceStr;
+                        }
+
+                        if ($motTrouve) {
+                            // La variable $dateNaissanceStr contient au moins l'un des mots recherchés
+                        } else {
+                            // Si la date n'es pas assez précise, nous instention cette date au 01 JAN
+                            if (strpos($dateNaissanceStr, 'BEF') !== false) {
+                                $dateNaissanceStr = str_replace('BEF', '01 JAN', $dateNaissanceStr);
+                            }elseif(strpos($dateNaissanceStr, 'ABT') !== false) {
+                            $dateNaissanceStr = str_replace('ABT', '01 JAN', $dateNaissanceStr);
+                        }
+                            elseif (strpos($dateNaissanceStr, 'BET') !== false) {
+                                $lastSpace = strrpos($dateNaissanceStr, ' ');
+                                $dateNaissanceStr = substr($dateNaissanceStr, $lastSpace + 1);
+                                $dateNaissanceStr = '01 JAN ' . $dateNaissanceStr;
+                            }
+                            else {
+                                $dateNaissanceStr = '01 JAN ' . $dateNaissanceStr;
+                            }
+                        }
+                        //Formatage de la date pour passer du type de 01 JAN 0000
+                        $dateNaissance = DateTime::createFromFormat('j M Y', $dateNaissanceStr);
+                        if ($dateNaissance !== false) {
+                            $dateNaissanceFormatee = $dateNaissance->format('Y-m-d');
+                            $naissanceFormatee[]=$dateNaissanceFormatee;
+                            $birtFound = false;
+                        }else{
+                            //echo $dateNaissanceStr;
+                        }
+                        $birtFound = false;
+                    }
+
+/* -----------------------------------TROUVER MORT -------------------------------------*/
+
+                    if(strpos($test, 'DEAT')){
+                        $deathFound = true;
+                    }
+//var_dump($deathFound);
+                    if (strpos($test, 'INDI')) {
+                        $indi++;
+
+                    }
+
+                   // var_dump($indiFound);
+                    if($deathFound && strpos($test, 'DATE') && $indi==1){
+                        $dateFound = true;
+
+                        $mort[] = trim(str_replace(['2 DATE', "\n", "\r"],'',$test));
+                        //Convertie l'Array $naissance en String
+                        $dateMortStr = end($mort);
+
+                        // Vérifier si la variable $naissance contient au moins l'un des mots recherchés
+                        $mois = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+                        $motTrouve = false;
+                        $joursTrouve = false;
+
+                        $words = explode(' ', $dateMortStr);
+                        $premierMot = $words[0];
+
+                        foreach ($mois as $mot) {
+                            if (strpos($dateMortStr, $mot) !== false) {
+                                $motTrouve = true;
+                                if ($premierMot === $mot) {
+                                    $joursTrouve = true;
+                                    break;
+                                }
+                                break;
+                            }
+                        }
+
+                        if ($joursTrouve) {
+                            $dateMortStr = '01 ' . $dateMortStr;
+                        }
+
+                        if ($motTrouve) {
+                            if (strpos($dateMortStr, 'BEF') !== false) {
+                                $dateMortStr = str_replace('BEF', '01', $dateMortStr);
+                            }
+                            elseif(strpos($dateMortStr, 'ABT') !== false) {
+                                $dateMortStr = str_replace('ABT', '01', $dateMortStr);
+                            }
+                            elseif(strpos($dateMortStr, 'AFT') !== false){
+                                $dateMortStr = str_replace('AFT', '01', $dateMortStr);
+                            }
+//                            elseif (strpos($dateMortStr, 'BET') !== false) {
+//                                $lastSpace = strrpos($dateMortStr, ' ');
+////                                $dateMortStr = substr($dateMortStr, $lastSpace -5 );
+//                                $dateMortStr = '01' . $dateMortStr;
+//                            }
+                        }else {
+                            // Si la date n'es pas assez précise, nous instention cette date au 01 JAN
+                            if (strpos($dateMortStr, 'BEF') !== false) {
+                                $dateMortStr = str_replace('BEF', '01 JAN', $dateMortStr);
+                            }
+                            elseif(strpos($dateMortStr, 'ABT') !== false) {
+                                $dateMortStr = str_replace('ABT', '01 JAN', $dateMortStr);
+                            }
+                            elseif(strpos($dateMortStr, 'AFT') !== false){
+                                $dateMortStr = str_replace('AFT', '01 JAN', $dateMortStr);
+                            }
+                            elseif (strpos($dateMortStr, 'BET') !== false) {
+                                $lastSpace = strrpos($dateMortStr, ' ');
+                                $dateMortStr = substr($dateMortStr, $lastSpace + 1);
+                                $dateMortStr = '01 JAN ' . $dateMortStr;
+                            }
+                            else {
+                                $dateMortStr = '01 JAN ' . $dateMortStr;
+                            }
+
+
+                        }
+                        //Formatage de la date pour passer du type de 01 JAN 0000
+                        $dateMort = DateTime::createFromFormat('j M Y', $dateMortStr);
+                        if ($dateMort !== false) {
+                            $dateMortFormatee = $dateMort->format('Y-m-d');
+                            $mortFormatee[]=$dateMortFormatee;
+
+
+                        }else  {
+                            $dateMortStr=substr($dateMortStr, -10);
+                            $dateMort = DateTime::createFromFormat('j M Y', $dateMortStr);
+                            if ($dateMort !== false) {
+                                $dateMortFormatee = $dateMort->format('Y-m-d');
+                                $mortFormatee[]=$dateMortFormatee;
+                            }
+                            echo $dateMortStr;
+                        }
+                        $indi=0;
+                        $deathFound = false;
+                        $dateFound = false;
+
+                    }
+
+                    elseif($indi==2 && (!$deathFound || !$dateFound)){
+                        $indi=1;
+                        $mort[]='01 JAN 0000';
+                        $dateMortStr = end($mort);
+                        $dateMort = DateTime::createFromFormat('j M Y', $dateMortStr);
+                        if ($dateMort !== false) {
+                            $dateMortFormatee = $dateMort->format('Y-m-d');
+                            $mortFormatee[]=$dateMortFormatee;
+
+
+                        }else  {
+                            echo $dateMortStr;
+                        }
+                    }
+
+//                    echo $indi;
                 }
+
+
+                foreach ($firstNames as $index => $firstName) {
+                    $dateNaissance = DateTime::createFromFormat('Y-m-d', $naissanceFormatee[$index]);
+                    $dateMort = DateTime::createFromFormat('Y-m-d', $mortFormatee[$index]);
+
+
+
+
+                    $personne = new Personne();
+                    $personne->setPrenom($firstName);
+                    $personne->setNom($lastNames[$index]);
+                    $personne->setSexe($sexe[$index]);
+                    if ($dateNaissance !== false) {
+                        $personne->setDateNaissance($dateNaissance);
+                    }
+                    if ($dateMort !== false) {
+                        $personne->setDateDeces($dateMort);
+                    }
+                    $personne->setIdGedcom($id[$index]);
+
+                    $this->entityManager->persist($personne);
+
+                }
+                $this->entityManager->flush();
+
+
+//                var_dump($deathFound);
+//                var_dump($indiFound);
+//                var_dump($naissanceFormatee);
+// affichez les résultats pour vérifier
+//                var_dump($naissance);
+                //var_dump($sexe);
+//                var_dump(count($firstNames));
+                //var_dump($lastNames);
                 fclose($handle);
                 //return $this->render('gedcom_import/affiche.html.twig' , array ('liste' => $buffer));
             }else{
@@ -70,6 +345,7 @@ public function afficherGedcom(){
             $this->redirectToRoute('app_import');
         }
 
-            return $this->render('gedcom_import/affiche.html.twig' , ['nameLines' => $nameLines]);
+            return $this->render('gedcom_import/affiche.html.twig' , ['id'=>$id,'firstNames' => $firstNames, 'lastNames'=>$lastNames, 'sexe'=>$sexe,
+                'naissance'=>$naissanceFormatee, 'mort'=>$mortFormatee]);
         }
 }

@@ -8,6 +8,9 @@ parameters:
 
 services:
     # default configuration for services in *this* file
+    App\Controller\GedcomImportController:
+        arguments:
+            $entityManager: '@doctrine.orm.entity_manager'
     App\Service\FileUploader:
         arguments:
             $targetDirectory: '%upload_directory%'

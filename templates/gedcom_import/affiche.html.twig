@@ -13,12 +13,14 @@
     </header>
 
     <table>
-        <tr><td></td></tr>
+        <tr><th>Id</th><th>Prenom</th><th>Nom de famille</th><th>Sexe</th><th>Naissance</th><th>Mort</th></tr>
+        {% for firstName in firstNames%}
+            <tr><td>{{ id[loop.index0] }}</td><td>{{ firstName }}</td><td>{{ lastNames[loop.index0] }}</td><td>{{ sexe[loop.index0] }}</td>
+                <td>{{ naissance[loop.index0] }}</td><td>{{ mort[loop.index0] }}</td></tr>
+        {% endfor %}
     </table>
 
-    {% for line in nameLines %}
-        <p>{{ line|split(' ')|last|trim|replace({'/': ' '}) }}</p>
-    {% endfor %}
+
 
 </div>
 </body>
