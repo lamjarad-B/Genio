@@ -3,16 +3,19 @@
 namespace App\Repository;
 
 use App\Entity\Personne;
+use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\DBAL\Connection;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManagerInterface;
 
 
 class PersonneRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    private $entityManager;
+    public function __construct(ManagerRegistry $registry, EntityManagerInterface $entityManager)
     {
         parent::__construct($registry, Personne::class);
+        $this->entityManager = $entityManager;
     }
 
     public function findOneBy(array $criteria, array $orderBy = null)
@@ -61,6 +64,29 @@ class PersonneRepository extends ServiceEntityRepository
         }
 
         return $qb->getQuery()->getResult();
+    }
+
+    public function createTree(
+        string $nom, 
+        string $prenom, 
+        ?DateTime $date_naissance, 
+        ?DateTime $date_deces, 
+        ?string $lieu_naissance, 
+        string $nomMere, 
+        string $prenomMere, 
+        ?DateTime $date_naissance_mere, 
+        ?DateTime $date_deces_mere, 
+        ?string $lieu_naissance_mere
+        ){
+       $pere = (new Personne())->setNom($nom)->setPrenom($prenom)->setDateNaissance($date_naissance)->setSexe("M")->setDateDeces($date_deces)->setLieuNaissance($lieu_naissance);
+       $mere = (new Personne())->setNom($nomMere)->setPrenom($prenomMere)->setDateNaissance($date_naissance_mere)->setSexe("F")->setDateDeces($date_deces_mere)->setLieuNaissance($lieu_naissance_mere);
+
+       $this->entityManager->persist($pere);
+       $this->entityManager->persist($mere);
+        
+       $this->entityManager->flush();
+       
+
     }
 
 

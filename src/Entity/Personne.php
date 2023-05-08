@@ -33,16 +33,17 @@ class Personne
     #[ORM\OneToMany(mappedBy: 'personne2', targetEntity: Relation::class, orphanRemoval: true)]
     private Collection $relationsPersonne2;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $dateNaissance = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $dateDeces = null;
 
+    #[ORM\Column(length: 64, nullable: true)]
+    private ?string $lieu_naissance = null;
+
     #[ORM\Column(nullable: true)]
     private ?string $idGedcom;
-
-
 
     public function __construct()
     {
@@ -174,6 +175,20 @@ class Personne
 
         return $this;
     }
+
+    public function getLieuNaissance(): ?string
+    {
+        return $this->lieu_naissance;
+    }
+
+    public function setLieuNaissance(?string $lieu_naissance): self
+    {
+        $this->lieu_naissance = $lieu_naissance;
+
+        return $this;
+    }
+    
+    
     /**
      * @return string|null
      */
