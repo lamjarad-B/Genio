@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use phpDocumentor\Reflection\Types\Nullable;
 
 #[ORM\Entity(repositoryClass: PersonneRepository::class)]
 class Personne
@@ -40,6 +41,9 @@ class Personne
 
     #[ORM\Column(length: 64, nullable: true)]
     private ?string $lieu_naissance = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?string $idGedcom;
 
     public function __construct()
     {
@@ -185,4 +189,19 @@ class Personne
     }
     
     
+    /**
+     * @return string|null
+     */
+    public function getIdGedcom(): ?string
+    {
+        return $this->idGedcom;
+    }
+
+    /**
+     * @param string|null $idGedcom
+     */
+    public function setIdGedcom(?string $idGedcom): void
+    {
+        $this->idGedcom = $idGedcom;
+    }
 }

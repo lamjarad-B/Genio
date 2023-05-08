@@ -18,6 +18,14 @@ class PersonneRepository extends ServiceEntityRepository
         $this->entityManager = $entityManager;
     }
 
+    public function findOneBy(array $criteria, array $orderBy = null)
+    {
+        $entityManager = $this->getEntityManager();
+        $repository = $entityManager->getRepository(Personne::class);
+
+        return $repository->findOneBy($criteria, $orderBy);
+    }
+
     public function findBySearchCriteria(object $criteria, ?string $nomConjoint, ?string $prenomConjoint, ?int $limit = null)
     {
         $qb = $this->createQueryBuilder('p');
