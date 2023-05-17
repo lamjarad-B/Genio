@@ -14,12 +14,18 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+
 class RegisterController extends AbstractController
 {
     private $entityManager;
+    private $tokenStorage;
 
-    public function __construct(entityManagerInterface $entityManager){
+    public function __construct(entityManagerInterface $entityManager, TokenStorageInterface $tokenStorage){
         $this->entityManager = $entityManager;
+        $this->tokenStorage = $tokenStorage;
     }
 
     #[Route('/register', name: 'app_register')]
@@ -37,7 +43,15 @@ class RegisterController extends AbstractController
 
             //$doctrine = $this->getDoctrine()->getManager(); //appel de doctrine
             $this->entityManager->persist($user);// Figer la data/ entityManager c'est le constructeur
-            $this->entityManager->flush(); // Enregistrer la data dans la base de données 
+            $this->entityManager->flush(); // Enregistrer la data dans la base de données
+            
+            $token = new UsernamePasswordToken($user, 'main', $user->getRoles());
+            $this->tokenStorage->setToken($token);
+    
+            // Redirigez l'utilisateur vers une autre page après la connexion
+            $targetUrl = $this->generateUrl('app_create_tree'); // Remplacez par le nom de la route de la page de destination
+    
+            return new RedirectResponse($targetUrl);
         }
 
         return $this->render('register/index.html.twig',

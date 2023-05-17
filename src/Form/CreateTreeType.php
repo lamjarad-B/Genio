@@ -19,6 +19,59 @@ class CreateTreeType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
+        ->add(
+            // Groupe Proprietaire
+            $builder->create('groupe_proprietaire', FormType::class, [
+                'label' => 'Vous',
+                'mapped' => false,
+                'compound' => true,
+            ])
+            ->add('nom', TextType::class, [
+                'label' => 'Nom',
+                'required' => true,
+                'constraints' => new Length([
+                    'min' => 2,
+                    'max' => 30
+                ]),
+                'attr' => ['placeholder' => 'Nom de naissance'],
+                'data' => $options['data']->getNom(),
+            ])
+            ->add('prenom', TextType::class, [
+                'label' => 'Prénom',
+                'required' => true,
+                'constraints' => new Length([
+                    'min' => 2,
+                    'max' => 30
+                ]),
+                'data' => $options['data']->getPrenom(),
+            ])
+                
+                ->add('date_naissance', DateType::class, [
+                    'label' => 'Date de naissance',
+                    'required' => false,
+                    'widget' => 'single_text',
+                    //'html5' => false,
+                    //'format' => 'dd-MM-yyyy',
+                    'empty_data' => null
+                ])
+                ->add('date_deces', DateType::class, [
+                    'label' => 'Date de décès',
+                    'required' => false,
+                    'widget' => 'single_text',
+                    //'html5' => false,
+                    //'format' => 'dd-MM-yyyy',
+                    'empty_data' => null,
+                ])
+                ->add('lieu_naissance', TextType::class, [
+                    'label' => 'Lieu de naissance',
+                    'required' => false,
+                    'constraints' => new Length([
+                        'min' => 2,
+                        'max' => 30,
+                    ])
+                ])
+            )
+            
             ->add(
                 // Groupe père
                 $builder->create('groupe_pere', FormType::class, [
@@ -62,6 +115,57 @@ class CreateTreeType extends AbstractType
                 ])
                 ->add('lieu_naissance', TextType::class, [
                     'label' => 'Lieu de naissance',
+                    'required' => false,
+                    'constraints' => new Length([
+                        'min' => 2,
+                        'max' => 30,
+                    ])
+                ])
+            )
+            ->add(
+                // Groupe père
+                $builder->create('groupe_pere', FormType::class, [
+                    'label' => 'Père',
+                    'mapped' => false,
+                    'compound' => true,
+                ])
+                ->add('nom', TextType::class, [
+                    'label' => 'Nom',
+                    'required' => true,
+                    'constraints' => new Length([
+                        'min' => 2,
+                        'max' => 30
+                    ]),
+                    'attr' => ['placeholder' => 'Nom de naissance']
+                ])
+                ->add('prenom', TextType::class, [
+                    'label' => 'Prénom',
+                    'required' => true,
+                    'constraints' => new Length([
+                        'min' => 2,
+                        'max' => 30
+                    ])
+                ])
+                
+                ->add('date_naissance', DateType::class, [
+                    'label' => 'Date de naissance',
+                    'required' => false,
+                    'widget' => 'single_text',
+                    //'html5' => false,
+                    //'format' => 'dd-MM-yyyy',
+                    'empty_data' => null
+                ])
+                ->add('date_deces', DateType::class, [
+                    'label' => 'Date de décès',
+                    'required' => false,
+                    'widget' => 'single_text',
+                    //'html5' => false,
+                    //'format' => 'dd-MM-yyyy',
+                    'empty_data' => null,
+                ])
+                ->add('lieu_naissance', TextType::class, [
+                    'label' => 'Lieu de naissance',
+                    'required' => false,
                     'constraints' => new Length([
                         'min' => 2,
                         'max' => 30,

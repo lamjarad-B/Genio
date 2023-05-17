@@ -44,16 +44,16 @@ class RegisterType extends AbstractType
             
             
 
-            ->add('date_naissance', DateType::class, [
-                'widget' => 'single_text',])
+            // ->add('date_naissance', DateType::class, [
+            //     'widget' => 'single_text',])
             //->add('date_deces')
-            ->add('sexe', ChoiceType::class, [
-                'choices' => [
-                    'M' => 'M',
-                    'F' => 'F',
-                ],
-                'expanded' => true,
-            ])
+            // ->add('sexe', ChoiceType::class, [
+            //     'choices' => [
+            //         'M' => 'M',
+            //         'F' => 'F',
+            //     ],
+            //     'expanded' => true,
+            // ])
           
 
             ->add('submit', SubmitType::class, ['label'=> "S'inscrire"])

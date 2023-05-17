@@ -3,6 +3,8 @@
 namespace App\Repository;
 
 use App\Entity\Personne;
+use App\Entity\Relation;
+use App\Entity\TypeRelation;
 use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -67,6 +69,11 @@ class PersonneRepository extends ServiceEntityRepository
     }
 
     public function createTree(
+        string $nomProprietaire, 
+        string $prenomProprietaire, 
+        ?DateTime $date_naissance_Proprietaire, 
+        ?DateTime $date_deces_Proprietaire, 
+        ?string $lieu_naissance_Proprietaire,
         string $nom, 
         string $prenom, 
         ?DateTime $date_naissance, 
@@ -78,11 +85,26 @@ class PersonneRepository extends ServiceEntityRepository
         ?DateTime $date_deces_mere, 
         ?string $lieu_naissance_mere
         ){
+       $propietaire = (new Personne())->setNom($nomProprietaire)->setPrenom($prenomProprietaire)->setDateNaissance($date_naissance_Proprietaire)->setSexe("M")->setDateDeces($date_deces_Proprietaire)->setLieuNaissance($lieu_naissance_Proprietaire);
        $pere = (new Personne())->setNom($nom)->setPrenom($prenom)->setDateNaissance($date_naissance)->setSexe("M")->setDateDeces($date_deces)->setLieuNaissance($lieu_naissance);
        $mere = (new Personne())->setNom($nomMere)->setPrenom($prenomMere)->setDateNaissance($date_naissance_mere)->setSexe("F")->setDateDeces($date_deces_mere)->setLieuNaissance($lieu_naissance_mere);
 
+       $pereRelation = $this->entityManager->getRepository(TypeRelation::class)->findOneBy(["nom_relation"=>"père"]);
+       $enfantRelation = $this->entityManager->getRepository(TypeRelation::class)->findOneBy(["nom_relation"=>"enfant"]);
+       $mereRelation = $this->entityManager->getRepository(TypeRelation::class)->findOneBy(["nom_relation"=>"mère"]);
+
+       $relation1 = (new Relation())->setPersonne1($pere)->setRelationType($pereRelation)->setPersonne2($propietaire);
+       $relation2 = (new Relation())->setPersonne2($pere)->setRelationType($enfantRelation)->setPersonne1($propietaire);
+       $relation3 = (new Relation())->setPersonne1($mere)->setRelationType($mereRelation)->setPersonne2($propietaire);
+       $relation4 = (new Relation())->setPersonne2($mere)->setRelationType($enfantRelation)->setPersonne1($propietaire);
+
+       $this->entityManager->persist($propietaire);
        $this->entityManager->persist($pere);
        $this->entityManager->persist($mere);
+       $this->entityManager->persist($relation1);
+       $this->entityManager->persist($relation2);
+       $this->entityManager->persist($relation3);
+       $this->entityManager->persist($relation4);
         
        $this->entityManager->flush();
        

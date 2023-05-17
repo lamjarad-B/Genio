@@ -3,12 +3,14 @@
 namespace App\Controller;
 
 use App\Entity\Personne;
+use App\Entity\User;
 use App\Form\CreateTreeType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Security;
 
 class CreateTreeController extends AbstractController
 {
@@ -21,44 +23,59 @@ class CreateTreeController extends AbstractController
     #[Route('/create_tree', name: 'app_create_tree')]
     public function index(Request $request): Response
     {
-          // Crée un objet Personne vide pour l'utiliser pour créer le formulaire.
-          $personne1 = new Personne();
-          $personne2 = new Personne();
+        $user = $this->getUser();
 
-          // Crée le formulaire de recherche de personne.
-          $form = $this->createForm(CreateTreeType::class);
-  
-          // Handle the form submission
-          $form->handleRequest($request);
+        if (!$user) {
+            throw $this->createAccessDeniedException('Vous devez être connecté pour accéder à cette page.');
+        }
+
+        // Crée un objet Personne vide pour l'utiliser pour créer le formulaire.
+        $personne1 = new Personne();
+        $personne2 = new Personne();
+        $personne3 = new Personne();
+
+        $personne1->setNom($user->getNom()); 
+        $personne1->setPrenom($user->getPrenom());
+
+        $form = $this->createForm(CreateTreeType::class, $personne1);
+        
+
+        // Handle the form submission
+        $form->handleRequest($request);
           
 
         if ($form->isSubmitted() && $form->isValid()) {
             // Récupérez les données du formulaire
             //dd($form);
-            $personne1 = $form->get('groupe_pere')->getData();
-            $personne2 = $form->get('groupe_mere')->getData();
+            $personne1 = $form->get('groupe_proprietaire')->getData();
+            $personne2 = $form->get('groupe_pere')->getData();
+            $personne3 = $form->get('groupe_mere')->getData();
             //dd($personne1);
 
-            $nom = $personne1['nom'];
-            $prenom = $personne1['prenom'];
-            $date_naissance = $personne1['date_naissance'];
-            $date_deces = $personne1['date_deces'];
-            $lieu_naissance = $personne1['lieu_naissance'];
+            $nomProprietaire = $personne1['nom'];
+            $prenomProprietaire = $personne1['prenom'];
+            $date_naissance_Proprietaire = $personne1['date_naissance'];
+            $date_deces_Proprietaire = $personne1['date_deces'];
+            $lieu_naissance_Proprietaire = $personne1['lieu_naissance'];
 
-            $nomMere = $personne2['nom'];
-            $prenomMere = $personne2['prenom'];
-            $date_naissance_mere = $personne2['date_naissance'];
-            $date_deces_mere = $personne2['date_deces'];
-            $lieu_naissance_mere = $personne2['lieu_naissance'];
+            $nom = $personne2['nom'];
+            $prenom = $personne2['prenom'];
+            $date_naissance = $personne2['date_naissance'];
+            $date_deces = $personne2['date_deces'];
+            $lieu_naissance = $personne2['lieu_naissance'];
 
-            // $nomMere = $data->getNom();
-            // $prenomMere = $data->getPrenom();
-            // $date_naissance_mere = $data->getDateNaissance();
-            // $date_deces_mere = $data->getDateDeces();
-            // $lieu_naissance_mere = $data->getLieuNaissance();
-        
+            $nomMere = $personne3['nom'];
+            $prenomMere = $personne3['prenom'];
+            $date_naissance_mere = $personne3['date_naissance'];
+            $date_deces_mere = $personne3['date_deces'];
+            $lieu_naissance_mere = $personne3['lieu_naissance'];      
             
             $this->entityManager->getRepository(Personne::class)->createTree(
+                $nomProprietaire,
+                $prenomProprietaire,
+                $date_naissance_Proprietaire,
+                $date_deces_Proprietaire,
+                $lieu_naissance_Proprietaire,
                 $nom,
                 $prenom,
                 $date_naissance,
@@ -69,7 +86,11 @@ class CreateTreeController extends AbstractController
                 $date_naissance_mere,
                 $date_deces_mere,
                 $lieu_naissance_mere
+
             );
+
+            return $this->redirectToRoute("app_arbre");
+
         }
 
         return $this->render('create_tree/index.html.twig', [
