@@ -4,7 +4,7 @@
     {# {{ dump (data) }} #}
     <ul>
         {% for personne in personnes %}
-            <li><a href="{{ path('app_arbre', { 'id': personne.id}) }}"> {{ personne.nom}} {{ personne.prenom }} {{ personne.id }}</li></a>
+            <li><a href="{{ path('app_arbre', { 'id': personne.id}) }}"> {{ personne.nom}} {{ personne.prenom }}</li></a>
         {% endfor %}
     </ul>
 {% endblock %}

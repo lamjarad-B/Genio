@@ -45,6 +45,9 @@ class Personne
     #[ORM\Column(nullable: true)]
     private ?string $idGedcom;
 
+    #[ORM\ManyToOne(inversedBy: 'personnes')]
+    private ?User $user = null;
+
     public function __construct()
     {
         $this->relationsPersonne1 = new ArrayCollection();
@@ -203,5 +206,17 @@ class Personne
     public function setIdGedcom(?string $idGedcom): void
     {
         $this->idGedcom = $idGedcom;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
+
+        return $this;
     }
 }
