@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Personne;
 use App\Entity\Relation;
 use App\Entity\TypeRelation;
+use App\Entity\User;
 use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -13,6 +14,7 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class PersonneRepository extends ServiceEntityRepository
 {
+    
     private $entityManager;
     public function __construct(ManagerRegistry $registry, EntityManagerInterface $entityManager)
     {
@@ -27,6 +29,8 @@ class PersonneRepository extends ServiceEntityRepository
 
         return $repository->findOneBy($criteria, $orderBy);
     }
+
+    
 
     public function findBySearchCriteria(object $criteria, ?string $nomConjoint, ?string $prenomConjoint, ?int $limit = null)
     {
@@ -68,12 +72,14 @@ class PersonneRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult();
     }
 
+
     public function createTree(
         string $nomProprietaire, 
         string $prenomProprietaire, 
         ?DateTime $date_naissance_Proprietaire, 
         ?DateTime $date_deces_Proprietaire, 
         ?string $lieu_naissance_Proprietaire,
+        ?int $userId,
         string $nom, 
         string $prenom, 
         ?DateTime $date_naissance, 
@@ -85,7 +91,8 @@ class PersonneRepository extends ServiceEntityRepository
         ?DateTime $date_deces_mere, 
         ?string $lieu_naissance_mere
         ){
-       $propietaire = (new Personne())->setNom($nomProprietaire)->setPrenom($prenomProprietaire)->setDateNaissance($date_naissance_Proprietaire)->setSexe("M")->setDateDeces($date_deces_Proprietaire)->setLieuNaissance($lieu_naissance_Proprietaire);
+        $user = $this->entityManager->getRepository(User::class)->find($userId);
+       $propietaire = (new Personne())->setNom($nomProprietaire)->setPrenom($prenomProprietaire)->setDateNaissance($date_naissance_Proprietaire)->setSexe("M")->setDateDeces($date_deces_Proprietaire)->setLieuNaissance($lieu_naissance_Proprietaire)->setUser($user);
        $pere = (new Personne())->setNom($nom)->setPrenom($prenom)->setDateNaissance($date_naissance)->setSexe("M")->setDateDeces($date_deces)->setLieuNaissance($lieu_naissance);
        $mere = (new Personne())->setNom($nomMere)->setPrenom($prenomMere)->setDateNaissance($date_naissance_mere)->setSexe("F")->setDateDeces($date_deces_mere)->setLieuNaissance($lieu_naissance_mere);
 

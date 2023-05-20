@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Personne;
 use App\Entity\User;
 use App\Form\CreateTreeType;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,16 +16,20 @@ use Symfony\Component\Security\Core\Security;
 class CreateTreeController extends AbstractController
 {
     private $entityManager;
+    private $userRepository;
 
-    public function __construct(EntityManagerInterface $entityManager){
+    public function __construct(EntityManagerInterface $entityManager, UserRepository $userRepository){
         $this->entityManager = $entityManager;
+        $this->userRepository = $userRepository;
     }
     
     #[Route('/create_tree', name: 'app_create_tree')]
     public function index(Request $request): Response
     {
         $user = $this->getUser();
-
+        $userId = $user->getId();
+        //dd($userId);
+        
         if (!$user) {
             throw $this->createAccessDeniedException('Vous devez être connecté pour accéder à cette page.');
         }
@@ -33,6 +38,8 @@ class CreateTreeController extends AbstractController
         $personne1 = new Personne();
         $personne2 = new Personne();
         $personne3 = new Personne();
+
+        //$userId = $this->entityManager->find(User::class, $userId);
 
         $personne1->setNom($user->getNom()); 
         $personne1->setPrenom($user->getPrenom());
@@ -45,6 +52,7 @@ class CreateTreeController extends AbstractController
           
 
         if ($form->isSubmitted() && $form->isValid()) {
+
             // Récupérez les données du formulaire
             //dd($form);
             $personne1 = $form->get('groupe_proprietaire')->getData();
@@ -76,6 +84,7 @@ class CreateTreeController extends AbstractController
                 $date_naissance_Proprietaire,
                 $date_deces_Proprietaire,
                 $lieu_naissance_Proprietaire,
+                $userId,
                 $nom,
                 $prenom,
                 $date_naissance,
@@ -89,7 +98,7 @@ class CreateTreeController extends AbstractController
 
             );
 
-            return $this->redirectToRoute("app_arbre");
+            return $this->redirectToRoute("app_edit_tree");
 
         }
 
