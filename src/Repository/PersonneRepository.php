@@ -106,6 +106,7 @@ class PersonneRepository extends ServiceEntityRepository
        $relation4 = (new Relation())->setPersonne2($mere)->setRelationType($enfantRelation)->setPersonne1($propietaire);
 
        $this->entityManager->persist($propietaire);
+
        $this->entityManager->persist($pere);
        $this->entityManager->persist($mere);
        $this->entityManager->persist($relation1);
