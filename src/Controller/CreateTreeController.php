@@ -34,7 +34,7 @@ class CreateTreeController extends AbstractController
             throw $this->createAccessDeniedException('Vous devez être connecté pour accéder à cette page.');
         }
 
-        // Crée un objet Personne vide pour l'utiliser pour créer le formulaire.
+        // Crée des objets Personne vide pour l'utiliser pour créer le formulaire.
         $personne1 = new Personne();
         $personne2 = new Personne();
         $personne3 = new Personne();
