@@ -10,14 +10,41 @@
 
     <h2>Ancêtres</h2>
 
-    {% if ancestors is empty %}
-        <p>Cette personne n'a pas d'ancêtres enregistrés.</p>
-    {% else %}
-        <ul>
-            {% for ancestor in ancestors %}
-                <li>{{ ancestor.nom }} {{ ancestor.prenom }} ({{ ancestor.date_naissance|date('d/m/Y') }} - {% if ancestor.date_deces is not null %}{{ ancestor.date_deces|date('d/m/Y') }}{% else %}{{ "now"|date('d/m/Y') }}{% endif %})</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
+    <ul>
+    <li>
+        {{ personne.nom }} {{ personne.prenom }}
+        {% if ancestors is not empty %}
+            <ul>
+                {% for ancestor in ancestors %}
+                    <li>
+                        {{ ancestor.nom }} {{ ancestor.prenom }}
+                        {% if loop.index == 1 %}
+                            <ul>
+                                {% for parent in ancestors %}
+                                    {% if parent.id == ancestor.id %}
+                                        <li>
+                                            {{ parent.nom }} {{ parent.prenom }}
+                                            {% if loop.index == 1 %}
+                                                <ul>
+                                                    {% for grandparent in ancestors %}
+                                                        {% if grandparent.id == parent.id %}
+                                                            <li>
+                                                                {{ grandparent.nom }} {{ grandparent.prenom }}
+                                                            </li>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                </ul>
+                                            {% endif %}
+                                        </li>
+                                    {% endif %}
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </li>
+</ul>
 
 {% endblock %}
