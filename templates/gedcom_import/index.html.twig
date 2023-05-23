@@ -1,21 +1,56 @@
 {% extends 'base.html.twig' %}
 {# templates/app/test-upload.html.twig #}
-{% block description %}Mettez ici le fichier a importer.{% endblock %}
 {% block content %}
+    <link rel="stylesheet" href="/assets/css/import.css">
+    {% block description %}Mettez ici le fichier a importer.{% endblock %}
+
     <div class="container container-fluid">
         <div class="row">
             <div class="col-lg-8">
-                {{ form_start(form, { attr: { 'accept-charset' : 'utf-8' }}) }}
-                <div class="form-group">
-                    {{ form_label(form.upload_file) }}
-                    {{ form_widget(form.upload_file) }}
-                    {{ form_errors(form.upload_file) }}
-                </div>
-                <div class="form-group">
-                    {{ form_widget(form.send, {'label': "Upload this file", 'attr' : { 'class': 'btn btn-primary' }}) }}
-                </div>
-                {{ form_rest(form) }}
-                {{ form_end(form) }}
+                {% if fileUploaded %}
+                    <div class="alert alert-success">Le fichier a été chargé avec succès !</div>
+                    {{ form_start(form, { attr: { 'accept-charset' : 'utf-8' }}) }}
+                    <div class="form-group">
+                        {{ form_label(form.upload_file) }}
+                        {{ form_widget(form.upload_file) }}
+                        {{ form_errors(form.upload_file) }}
+                    </div>
+                    <div class="form-group">
+                        {{ form_widget(form.send, {'label': "Upload this file", 'attr' : { 'class': 'btn btn-primary' }}) }}
+                    </div>
+                    {{ form_rest(form) }}
+                    {{ form_end(form) }}
+
+
+
+                    <header>
+                        <h2>Affichage arbre généalogique</h2>
+                        <p> Ici vous vérez l'arbre généalogique que vous avez importé. </p>
+                        </br>
+                    </header>
+
+                    <table>
+                        <tr><th>Id</th><th>Prenom</th><th>Nom de famille</th><th>Sexe</th><th>Naissance</th><th>Mort</th></tr>
+                        {% for firstName in firstNames%}
+                            <tr><td>{{ id[loop.index0] }}</td><td>{{ firstName }}</td><td>{{ lastNames[loop.index0] }}</td><td>{{ sexe[loop.index0] }}</td>
+                                <td>{{ naissance[loop.index0] }}</td><td>{{ mort[loop.index0] }}</td></tr>
+                        {% endfor %}
+                    </table>
+
+
+                {% else %}
+                    {{ form_start(form, { attr: { 'accept-charset' : 'utf-8' }}) }}
+                    <div class="form-group">
+                        {{ form_label(form.upload_file) }}
+                        {{ form_widget(form.upload_file) }}
+                        {{ form_errors(form.upload_file) }}
+                    </div>
+                    <div class="form-group">
+                        {{ form_widget(form.send, {'label': "Upload this file", 'attr' : { 'class': 'btn btn-primary' }}) }}
+                    </div>
+                    {{ form_rest(form) }}
+                    {{ form_end(form) }}
+                {% endif %}
             </div>
         </div>
     </div>
