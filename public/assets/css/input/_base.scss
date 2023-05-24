@@ -1,0 +1,359 @@
+@import "valeurs-globales";
+@import "mixin";
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap');
+html{
+  min-height: 100%;
+  max-height: 100%;
+  height: 100%;
+  // position: relative;
+  scroll-behavior: smooth;
+}
+body{
+  // position: relative;
+  display: flex;
+  flex-direction: column;
+  background-color: #F0F0F0;
+  font-family: $fontPoppins;
+  height: 100%;
+  min-height: 100%;
+  max-height: 100%;
+}
+header{
+  background-color: #fff;
+  padding: 1rem 1rem 0 1rem;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+  div{
+    display: flex;
+    justify-content: space-between;
+    p{
+      margin-top: .5rem;
+      span{
+        img{
+          width: 24px;
+          height: 16px;
+        }
+      }
+    }
+    .logo{
+      width: 10rem;
+      height: 7.3rem;
+      float: left;
+      margin-right: 2rem;
+    }
+    a{
+      margin-right: 1rem;
+      text-decoration: none;
+      color: black;
+      .iconeLangue{
+        margin-right: .2rem;
+        margin-top: .6rem;
+      }
+
+    }
+    div{
+      margin-right: 25rem;
+      i{
+        font-size: 2rem;
+        color: $colorOr;
+      }
+      .profil{
+        @include h3;
+        margin-top: .5rem;
+      }
+    }
+  }
+
+  nav{
+    clear: both;
+
+    font-family: $fontPoppins;
+    text-align: center;
+    padding: 0.5rem 0 0.5rem 0;
+    input[type="checkbox"]{
+      display: none;
+    }
+    ul{
+      margin-top: -3rem;
+      li{
+        //position: relative;
+        display: inline-block;
+        a{
+          text-decoration: none;
+          padding: 0px 1.1rem;
+          font-size: 1.1rem;
+          margin: 0px;
+          line-height: 2.25;
+          -webkit-transition: .5s;
+          color: #202020;
+          z-index: 0;
+          &:hover{
+            color: #BCA474;
+          }
+        }
+        /* Boutton connexion */
+        .connexion{
+          position: absolute;
+          top: 1rem;
+          right: 1rem;
+          font-weight: bold;
+          font-family: $fontRaelway;
+          @include animButton($colorOr, #af9654, #c1a65c, #d4b565);
+          color: white;
+          transition: none;
+          &:hover{
+            color: white;
+          }
+        }
+      }
+    }
+  }
+}
+/* Menu de navigation au scroll */
+header.scroll{
+  background-color: white;
+  box-shadow: rgba(0, 0, 0, 0.5) 0px 3px 8px;
+  padding: .5rem 1rem 0 1rem;
+  .logo{
+    width: 9rem;
+    height: 6.3rem;
+  }
+  nav{
+    padding: 0.3rem 0 0 0;
+  }
+}
+
+
+footer{
+  // position: absolute;
+  // bottom: 0;
+  // left: 0;
+  // right: 0;
+  clear: both;
+  background-color: black;
+  color: white;
+  display: flex;
+  justify-content: space-around;
+  ul{
+    margin: 2rem 0;
+    li{
+      margin-bottom: 1rem;
+      a{
+        text-decoration: none;
+        color: white;
+      }
+    }
+  }
+  div{
+    ul{
+      li{
+        display: inline-block;
+        span{
+          color: $colorOr;
+        }
+        .carre {
+          font-size: 1.4rem;
+          padding: .1rem 0.4rem;
+          margin: 0 2rem 0 0;
+          box-shadow: 0 0 0 3px $colorOr;
+          transition: all 500ms ease;
+          &:hover{
+            background-color: $colorOr;
+            color: black;
+            box-shadow: 0 0 0 3px #af9654;
+            transition: all 500ms ease;
+          }
+          i{
+            color: white;
+            &:hover{
+              color: black;
+            }
+          }
+        }
+      }
+    }
+    ul:first-child li{
+      margin-right: 1rem;
+      padding-right: 1rem;
+      border-right: 1px solid $colorOr;
+    }
+    ul:nth-child(2){
+      text-align: center;
+    }
+  }
+}
+
+
+/** STYLE TABLETTE **/
+
+@media (max-width: 1024px){
+  header{
+    div{
+      .logo{
+        width: 9rem;
+        height: 6.3rem;
+      }
+        .profil{
+          font-size: 1rem;
+        }
+      a{
+        i{
+          font-size: 1.7rem;
+        }
+      }
+      .connexion{
+        padding: .4rem .9rem;
+        font-size: 1rem;
+      }
+      div{
+        margin-right: 15rem;
+      }
+    }
+    nav{
+      text-align: right;
+      margin-right: 4rem;
+      padding: 0.3rem 0 0 0;
+     ul li a{
+       font-size: 1rem;
+     }
+    }
+  }
+
+  footer{
+    div{
+      ul:first-child{
+        li{
+          display: block;
+          border: none;
+        }
+      }
+    }
+  }
+}
+
+/** STYLE SMARTPHONE **/
+@media (hover: none), (max-width: 840px){
+  header{
+    div{
+      p{
+        margin-left: -5rem;
+        span{
+          img{
+            width: 20px;
+            height: 14px;
+          }
+        }
+      }
+      div{
+        margin-right: 3rem;
+        .profil{
+          display: none;
+        }
+      }
+    }
+    nav{
+      input:checked {
+        + label > span {
+          transform: rotate(45deg);
+          &::before {
+            top: 0;
+            transform: rotate(0deg);
+          }
+          &::after {
+            top: 0;
+            transform: rotate(90deg);
+          }
+        }
+        ~ ul {
+          right: 0 !important;
+        }
+      }
+
+      label {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        width: 26px;
+        height: 26px;
+        cursor: pointer;
+        z-index: 1;
+        > span, ::before, ::after{
+          display: block;
+          position: absolute;
+          width: 100%;
+          height: 2px;
+          background-color: #616161;
+          transition-duration: .25s;
+        }
+        > span::before {
+          content: '';
+          top: -8px;
+        }
+        > span::after {
+          content: '';
+          top: 8px;
+        }
+      }
+      /* Bloc menu burger */
+      ul{
+        opacity: 0.95;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        align-items: center;
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: 15.5rem;
+        height: 50%;
+        margin: 0;
+        padding: 5rem 0;
+        list-style: none;
+        background-color: #ECEFF1;
+        box-shadow: 2px 2px 6px rgba(0, 0, 0, .4);
+        transition-duration: .25s;
+        li{
+          a{
+            display: block;
+            color: #333;
+            font-size: 1.1rem;
+            font-weight: 600;
+            transition-duration: .25s;
+
+          }
+          .connexion{
+            position: static;
+            background-color: inherit;
+            border: none;
+            color: inherit;
+            font-size: 1rem;
+            text-transform: uppercase;
+            -webkit-transition: .5s;
+            &:hover{ /* Pour supprimer l'animation qui a été sur le button connexion */
+              background: inherit;
+              color: $colorOr;
+
+            }
+          }
+        }
+      }
+    }
+  }
+
+  footer{
+    font-size: .8rem;
+    > ul{
+      margin-right: 2rem;
+      margin-left: 1rem;
+    }
+    div{
+      width: 50%;
+      ul:last-child{
+        display: none;
+      }
+    }
+  }
+}

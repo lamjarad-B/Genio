@@ -17,40 +17,47 @@ class SearchPersonType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('nom', TextType::class, ['label'=> 'Nom de famille',
+            ->add('nom', TextType::class, [
             'required' => true,
+            'label' => false,
             'constraints' => new length([
             'min' => 2,
             'max' => 30
             ]),
-            'attr' => ['placeholder' => 'Merci de renseigner le nom svp']])
-            ->add('prenom', TextType::class, ['label'=> 'Prénom',
+            'attr' => ['placeholder' => 'Nom de famille']])
+            ->add('prenom', TextType::class, [
             'required' => false,
+            'label' => false,
             'constraints' => new length([
             'min' => 2,
             'max' => 30
             ]),
-            'attr' => ['placeholder' => 'Merci de renseigner le prénom svp']])
+            'attr' => ['placeholder' => 'Prénom']])
             
-            ->add('date_naissance', TextType::class, ['label'=> 'Date de naissance',
-            'required' => false])
+            ->add('date_naissance', TextType::class, [
+            'required' => false,
+            'label' => false,
+            'attr' => ['placeholder' => 'Date de Naissance']])
+            
 
-            ->add('nomConjoint', TextType::class, ['label'=> 'Nom du conjoint(e)',
+            ->add('nomConjoint', TextType::class, [
             'required' => false,
+            'label' => false,
             'mapped' => false,
             'constraints' => new length([
             'min' => 2,
             'max' => 30
             ]),
-            'attr' => ['placeholder' => 'Merci de renseigner le nom du conjoint(e)']])
-            ->add('prenomConjoint', TextType::class, ['label'=> 'Prénom du conjoint(e)',
+            'attr' => ['placeholder' => 'Nom du conjoint(e']])
+            ->add('prenomConjoint', TextType::class, [
             'required' => false,
+            'label' => false,
             'mapped' => false,
             'constraints' => new length([
             'min' => 2,
             'max' => 30
             ]),
-            'attr' => ['placeholder' => 'Merci de renseigner le prénom du conjoint(e)']])
+            'attr' => ['placeholder' => 'Prénom du conjoint(e)']])
             // ->add('date_deces')
             // ->add('sexe')
             ->add('submit', SubmitType::class, ['label'=> "Rechercher"])
