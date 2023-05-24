@@ -1,5 +1,4 @@
 {% extends 'base.html.twig' %}
-
 {% block content %}
     <h1>{{ personne.nom }} {{ personne.prenom }}</h1>
 
@@ -10,42 +9,70 @@
     {% endif %}
 
     <h2>Ancêtres</h2>
-<ul>
-    <li>
-        {{ personne.nom }} {{ personne.prenom }}
-        {% if ancestors is not empty %}
-            <ul>
-                {% for ancestor in ancestors %}
-                    <li>
-                        {{ ancestor.nom }} {{ ancestor.prenom }}
-                        {% if loop.index == 1 %}
-                            <ul>
-                                {% for parent in ancestors %}
-                                    {% if parent.id == ancestor.id %}
-                                        <li>
-                                            {{ parent.nom }} {{ parent.prenom }}
-                                            {% if loop.index == 1 %}
-                                                <ul>
-                                                    {% for grandparent in ancestors %}
-                                                        {% if grandparent.id == parent.id %}
-                                                            <li>
-                                                                {{ grandparent.nom }} {{ grandparent.prenom }}
-                                                            </li>
-                                                        {% endif %}
-                                                    {% endfor %}
-                                                </ul>
-                                            {% endif %}
-                                        </li>
-                                    {% endif %}
-                                {% endfor %}
-                            </ul>
-                        {% endif %}
-                    </li>
-                {% endfor %}
-            </ul>
-        {% endif %}
-    </li>
-</ul>
 
+	<ul>
+		{# Fonction pour afficher les parents d'une personne #}
+		{% macro displayParents(ancestors, personId, originId) %}
+			{% set person = ancestors|filter(v => v.id == personId)|first %}
 
+			{# On vérifie que la personne existe bien #}
+			{% if person is not null %}
+				{# On affiche l'origine de l'arbre uniquement pour la personne recherchée #}
+				{% if person.id == originId %}
+					<li>
+						{{ person.nom }} {{ person.prenom }} ({{ person.sexe }})
+
+						<em>({{ person.date_naissance }})</em>
+					</li>
+				{% endif %}
+
+				{# Récupération de l'identifiant unique du père et de ses informations (si disponible) #}
+				{% set fatherId = ancestors|filter(v => v.personne2_id == person.id and v.relation_type_id == 1)|first %}
+				{% set fatherData = null %}
+				{% if fatherId is iterable %}
+					{% set fatherData = ancestors|filter(v => v.id == fatherId.personne1_id)|first %}
+				{% endif %}
+
+				{# Récupération de l'identifiant unique de la mère et de ses informations (si disponible) #}
+				{% set motherId = ancestors|filter(v => v.personne2_id == person.id and v.relation_type_id == 2)|first %}
+				{% set motherData = null %}
+				{% if motherId is iterable %}
+					{% set motherData = ancestors|filter(v => v.id == motherId.personne1_id)|first %}
+				{% endif %}
+
+				<ul>
+					{% if fatherData is not null %}
+						{# Affichage des informations du père #}
+						<li>
+							<strong>Père</strong>
+
+							{{ fatherData.nom }} {{ fatherData.prenom }} ({{ fatherData.sexe }})
+
+							<em>({{ fatherData.date_naissance }})</em>
+						</li>
+
+						{# Appel récursif de la fonction pour afficher les parents du père #}
+						{{ _self.displayParents(ancestors, fatherData.id, originId) }}
+					{% endif %}
+
+					{% if motherData is not null %}
+						{# Affichage des informations de la mère #}
+						<li>
+							<strong>Mère</strong>
+
+							{{ motherData.nom }} {{ motherData.prenom }} ({{ motherData.sexe }})
+
+							<em>({{ motherData.date_naissance }})</em>
+						</li>
+
+						{# Appel récursif de la fonction pour afficher les parents de la mère #}
+						{{ _self.displayParents(ancestors, motherData.id, originId) }}
+					{% endif %}
+				</ul>
+			{% endif %}
+		{% endmacro %}
+
+		{# Appel initial de la fonction pour la personne recherchée #}
+		{{ _self.displayParents(ancestors, originId, originId) }}
+	</ul>
 {% endblock %}

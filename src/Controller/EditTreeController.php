@@ -36,14 +36,15 @@ class EditTreeController extends AbstractController
             ->getQuery();
 
         $personId = $query->getSingleScalarResult();
-        // dd( $personId);
+        //dd( $personId);
         $personne = $personneRepository->find($personId);
 
         $ancestors = $arbreRepository->getAncestors($personId);
 
         return $this->render('edit_tree/index.html.twig', [
              'personne' => $personne,
-             'ancestors' => $ancestors
+             'ancestors' => $ancestors,
+             'originId' => $personId
         ]);
     }
 }

@@ -1,0 +1,112 @@
+@mixin form($padding){ /* style générale du formulaire*/
+  background-color: rgba(255, 255, 255, .9);
+  padding: $padding;
+  border-radius: 0 0 .5rem .5rem;
+}
+@mixin inputSelectForm($width){ /* style générale des élémets input et select du formulaire*/
+  background: #eef1f6;
+  border: solid 1px $colorOr;
+  font-size: 1rem;
+  color: #495057;
+  width: $width;
+  border-radius: .25rem;
+  padding: .6rem .8rem;
+}
+
+@mixin inputForm($width){ /* style spécial des élémets input du formulaire*/
+  @include inputSelectForm($width);
+  margin-bottom: 10px;
+  width: $width;
+
+}
+@mixin h2{ /* style générale des h2 */
+  font-size: 2rem;
+  font-family:$fontRaelway;
+  font-weight: 500;
+}
+@mixin h1{/* style générale des h1 */
+  font-size: 3.2rem;
+  font-family:$fontRaelway;
+  font-weight: bold;
+}
+@mixin h3{ /* style générale des h2 */
+  font-size: 1.2rem;
+  font-family:$fontRaelway;
+  font-weight: 500;
+}
+@mixin backgroundImageEach($urls){ /* pour les images des catégories de chambre de la page d'accueil */
+  @each $url in $urls{
+    ##{$url} {
+      background-image : url('../../images/index/#{$url}.jpg');
+      @content;
+    }
+  }
+
+
+}
+@mixin backgroundImage($url, $width, $height){ /* pour défirnir une image en background */
+  background-image : $url;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  width: $width;
+  height: $height;
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
+@mixin rotation{ /* animation rotation */
+  height: 25%;
+  bottom: -13%;
+  left: -5%;
+  transform: rotate(10deg);
+  width: 120%;
+}
+@mixin transition{/* la transition des animations */
+  left: 8%;
+  font-size: 20px;
+  transition-delay: .3s;
+}
+
+@mixin animButton($background, $color1, $color2, $color3){ /* animation des bouttons */
+  font-size: 1.1rem;
+  background-color: $background;
+  border: solid 1px #BCA474;
+  color: white;
+  cursor: pointer;
+  &:hover{
+    background: -webkit-linear-gradient($color1 0%, $color2 47%, $color3 100%);
+    background: -o-linear-gradient($color1 0%, $color2 47%, $color3 100%);
+    background: linear-gradient($color1 0%, $color2 47%, $color3 100%);
+  }
+}
+@mixin button($width, $padding){ /* Style général des bouttons */
+  padding: $padding;
+  border-radius: .25rem;
+  width: $width;
+  display: block;
+  // margin-right: auto;
+  // margin-left: auto;
+}
+@mixin success{
+  position: fixed;
+  top: 50vh;
+  right: calc(50% - 155px);
+  padding: 20px;
+  background-color: #f44336;
+  color: white;
+  opacity: 1;
+  transition: opacity 0.6s;
+  background-color: #4CAF50;
+  visibility: hidden;
+}
+@mixin closebtn{
+  margin-left: 15px;
+  color: white;
+  font-weight: bold;
+  float: right;
+  font-size: 22px;
+  line-height: 20px;
+  cursor: pointer;
+  &:hover{
+    color: black;
+  }
+}

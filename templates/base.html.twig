@@ -13,6 +13,7 @@
         <link href="{{ asset('assets/css/output/accountStyle.css') }}" rel="stylesheet">
         <link href="{{ asset('assets/css/output/createTree.css') }}" rel="stylesheet">
         <link href="{{ asset('assets/css/output/editTreeStyle.css') }}" rel="stylesheet">
+        <link href="{{ asset('assets/css/output/homeStyle.css') }}" rel="stylesheet">
         {# Run `composer require symfony/webpack-encore-bundle` to start using Symfony UX #}
         {% block stylesheets %}
             {# {{ encore_entry_link_tags('app') }} #}
@@ -22,11 +23,43 @@
             {# {{ encore_entry_script_tags('app') }} #}
         {% endblock %}
     </head>
+    <header>
+    <div class="container">
+            <nav class="nav">
+                <input type="checkbox" id="nav-check">
+                <div class="nav-header">
+                    <div class="nav-title">
+                    Genio
+                    </div>
+                </div>
+                <div class="nav-btn">
+                    <label for="nav-check">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </label>
+                </div>
+                
+                <ul class="nav-list">
+                        <li><a href="#" class="links">Accueil</a></li>
+                        <li><a href="#" class="links">Recherche</a></li>
+                        <li><a href="#" class="links">Arbre</a></li>
+                        <li><a href="#" class="links">Mon compte</a></li>
+                        <li><button class="links">Connexion</button></li>
+                        <li><button class="links">Inscription</button></li>
+                </ul>
+            </nav>
+    </div>
+    </header>
     <body>
+
     
         {% block content %}
         {% endblock %}
 
         <script src="{{ asset('assets/js/bootstrap.bundle.js') }}"></script>    
+        <script src="{{ asset('assets/js/homeJS.js') }}"></script>
+        <script src="{{ asset('assets/js/baseJS.js') }}"></script>    
     </body>
+    
 </html>

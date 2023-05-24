@@ -1,8 +1,36 @@
 {% extends 'base.html.twig' %}
 {% block content %}
-    <h1>Recherche</h1>
-    {# {{ dump (data) }} #}
-    {% if form is defined %}
-    {{ form(form) }}
-    {% endif %}
+
+    <div id="container">
+        <div id="serchAncetors">
+            <h2>Rechercher vos ancêtres</h2>
+            <p>
+                Explorez les racines de votre histoire avec notre rubrique 'Arbre Généalogique'. Que vous cherchiez un ancêtre précis ou que vous souhaitiez découvrir les secrets de votre lignée, Genio est là pour vous aider, même si vous n'avez qu'une simple intuition.
+            </p>
+            {# {{ dump (data) }} #}
+            {% if form is defined %}
+            {{ form(form) }}
+            {% endif %}
+        </div>
+        <div id="imgTree">
+
+        </div>
+    </div>
+    <section id="createTree">
+        <div id="description">
+            <h2>L'Arbre Familial avec Genio</h2>
+            <p>Découvrez vos racines avec l'Arbre Familial de <strong>Genio</strong>, où chaque personne trouve sa place.</p>
+
+            <p>Plongez dans une immense base de données généalogiques avec la rubrique "Arbre Familial" de <strong>Genio</strong>. Avec plus d'un milliard deux cents millions d'ancêtres répertoriés, notre arbre généalogique en ligne est le plus vaste au monde.</p>
+
+            <p>Explorez votre héritage familial grâce à notre modèle d'arbre généalogique gratuit, offrant une multitude de modes d'affichage pour mieux visualiser votre lignée. Les outils chronologiques et géographiques intégrés vous guideront dans votre quête de connaissances, tandis que nos astuces et aides de recherche vous aideront à débloquer les mystères de votre passé.</p>
+
+            <p>Laissez-nous vous aider à créer un héritage durable en explorant l'Arbre Familial de <strong>Genio</strong>. Chaque nom, chaque histoire compte, et nous sommes là pour vous accompagner dans votre quête pour honorer vos ancêtres et perpétuer leur mémoire.</p>
+            <button id="startTree"><a href="{{ path('app_register')}}">Commencer mon arbre<a></button>
+        </div>
+        <div id="imgCreateTree">
+
+        </div>
+    </section>
+
 {% endblock %}
