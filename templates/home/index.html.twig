@@ -26,11 +26,45 @@
             <p>Explorez votre héritage familial grâce à notre modèle d'arbre généalogique gratuit, offrant une multitude de modes d'affichage pour mieux visualiser votre lignée. Les outils chronologiques et géographiques intégrés vous guideront dans votre quête de connaissances, tandis que nos astuces et aides de recherche vous aideront à débloquer les mystères de votre passé.</p>
 
             <p>Laissez-nous vous aider à créer un héritage durable en explorant l'Arbre Familial de <strong>Genio</strong>. Chaque nom, chaque histoire compte, et nous sommes là pour vous accompagner dans votre quête pour honorer vos ancêtres et perpétuer leur mémoire.</p>
-            <button id="startTree"><a href="{{ path('app_register')}}">Commencer mon arbre<a></button>
+            <button id="startTree"><a href="{{ path('app_register')}}">Commencer mon arbre</a></button>
+            <a href="{{ path('app_import')}}">Vous avez un fichier gedcome ? Télécharger le</a>
         </div>
         <div id="imgCreateTree">
 
         </div>
+    </section>
+
+    <section id="howToCreateTree">
+        <h2>Comment créer son Arbre</h2>
+        <h4>Créer un arbre généalogique est simple et gratuit.</h4>
+        <article id="register">
+            <div id="registerPhoto">
+            </div>
+            <div>
+                <h3>Étape n° 1 : Créez un compte gratuitement.</h3>
+                <p>Non seulement pourrez-vous débuter votre arbre généalogique, mais vous aurez également la possibilité de consulter les registres en ligne de Genio ainsi que de profiter de la fonctionnalité "Souvenirs".</p>
+            </div>
+        </article>
+        <article id="tree">
+            <div>
+                <h3>Étape n° 2 : Ajoutez les renseignements que vous connaissez à propos de votre famille.</h3>
+                <p>
+                    Nous recommandons de commencer par les quatre premières générations. Genio protège la vie privée des personnes vivantes : personne d’autre ne peut voir ce que vous avez écrit sur les membres vivants de votre famille ou sur vous-même.
+                </p>
+            </div>
+            <div id="arbrePhoto">
+            </div>
+        </article>
+        <article id="ok">
+            <div id="okPhoto">
+            </div>
+            <div>
+                <h3>Étape n° 3 : Accédez à la vaste base de données en ligne de FamilySearch.</h3>
+                <p>
+                    Lorsque vous ajoutez un parent décédé à votre arbre, FamilySearch s'efforce de vous mettre en relation avec toutes les informations disponibles sur cette personne dans la base de données. Lorsque le logiciel trouve une correspondance, il complète automatiquement les détails, ce qui vous permet d'économiser considérablement de temps !
+                </p>
+            </div>
+        </article>
     </section>
 
 {% endblock %}

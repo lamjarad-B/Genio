@@ -23,32 +23,32 @@
             {# {{ encore_entry_script_tags('app') }} #}
         {% endblock %}
     </head>
-    <header>
+        <header>
     <div class="container">
-            <nav class="nav">
-                <input type="checkbox" id="nav-check">
-                <div class="nav-header">
-                    <div class="nav-title">
-                    Genio
-                    </div>
+        <nav class="nav">
+            <input type="checkbox" id="nav-check">
+            <div class="nav-header">
+                <div class="nav-title">
+                Genio
                 </div>
-                <div class="nav-btn">
-                    <label for="nav-check">
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                    </label>
-                </div>
-                
-                <ul class="nav-list">
-                        <li><a href="#" class="links">Accueil</a></li>
-                        <li><a href="#" class="links">Recherche</a></li>
-                        <li><a href="#" class="links">Arbre</a></li>
-                        <li><a href="#" class="links">Mon compte</a></li>
-                        <li><button class="links">Connexion</button></li>
-                        <li><button class="links">Inscription</button></li>
-                </ul>
-            </nav>
+            </div>
+            <div class="nav-btn">
+                <label for="nav-check">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </label>
+            </div>
+            
+            <ul class="nav-list">
+                    <li><a href="#" class="links">Accueil</a></li>
+                    <li><a href="#" class="links">Recherche</a></li>
+                    <li><a href="#" class="links">Arbre</a></li>
+                    <li><a href="#" class="links">Mon compte</a></li>
+                    <li><button class="links">Connexion</button></li>
+                    <li><button class="links">Inscription</button></li>
+            </ul>
+        </nav>
     </div>
     </header>
     <body>
@@ -57,9 +57,9 @@
         {% block content %}
         {% endblock %}
 
-        <script src="{{ asset('assets/js/bootstrap.bundle.js') }}"></script>    
-        <script src="{{ asset('assets/js/homeJS.js') }}"></script>
-        <script src="{{ asset('assets/js/baseJS.js') }}"></script>    
+        
     </body>
-    
+    <script src="{{ asset('assets/js/bootstrap.bundle.js') }}"></script>    
+    <script src="{{ asset('assets/js/homeJS.js') }}"></script>
+    <script src="{{ asset('assets/js/baseJS.js') }}"></script>    
 </html>

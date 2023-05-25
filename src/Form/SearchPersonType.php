@@ -48,7 +48,7 @@ class SearchPersonType extends AbstractType
             'min' => 2,
             'max' => 30
             ]),
-            'attr' => ['placeholder' => 'Nom du conjoint(e']])
+            'attr' => ['placeholder' => 'Nom du conjoint(e)']])
             ->add('prenomConjoint', TextType::class, [
             'required' => false,
             'label' => false,
