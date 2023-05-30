@@ -25,7 +25,7 @@ class Personne
 
 
     #[ORM\Column(length: 1)]
-    private ?string $sexe = null;
+    private ?string $sexe = "M";
 
     #[ORM\OneToMany(mappedBy: 'personne1', targetEntity: Relation::class, orphanRemoval: true)]
     private Collection $relationsPersonne1;

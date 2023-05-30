@@ -40,7 +40,7 @@
 					{% set motherData = ancestors|filter(v => v.id == motherId.personne1_id)|first %}
 				{% endif %}
 
-				<ul>
+				<ul class="ancetors">
 					{% if fatherData is not null %}
 						{# Affichage des informations du père #}
 						<li>
@@ -68,6 +68,51 @@
 						{# Appel récursif de la fonction pour afficher les parents de la mère #}
 						{{ _self.displayParents(ancestors, motherData.id, originId) }}
 					{% endif %}
+
+					{% if fatherData is null and motherData is null %}
+							<button id="addButton">Ajouter</button>
+							<form class="addAncetors" data-id="{{ personId }}">
+								<div>
+									<h2>Père</h2>
+									<label for="pere_nom">Nom:</label>
+									<input type="text" id="pere_nom" name="pere_nom" required><br>
+
+									<label for="pere_prenom">Prénom:</label>
+									<input type="text" id="pere_prenom" name="pere_prenom" required><br>
+
+									<label for="pere_date_naissance">Date de naissance:</label>
+									<input type="date" id="pere_date_naissance" name="pere_date_naissance" required><br>
+
+									<label for="pere_date_deces">Date de décès:</label>
+									<input type="date" id="pere_date_deces" name="pere_date_deces" required><br>
+
+									<label for="pere_lieu_naissance">Lieu de naissance:</label>
+									<input type="text" id="pere_lieu_naissance" name="pere_lieu_naissance" required><br>
+								</div>
+
+								<div>
+									<h2>Mère</h2>
+									<label for="mere_nom">Nom:</label>
+									<input type="text" id="mere_nom" name="mere_nom" required><br>
+
+									<label for="mere_prenom">Prénom:</label>
+									<input type="text" id="mere_prenom" name="mere_prenom" required><br>
+
+									<label for="mere_date_naissance">Date de naissance:</label>
+									<input type="date" id="mere_date_naissance" name="mere_date_naissance" required><br>
+
+									<label for="mere_date_deces">Date de décès:</label>
+									<input type="date" id="mere_date_deces" name="mere_date_deces" required><br>
+
+									<label for="mere_lieu_naissance">Lieu de naissance:</label>
+									<input type="text" id="mere_lieu_naissance" name="mere_lieu_naissance" required><br>
+								</div>
+
+								<input type="submit" name="addAncetors" value="Envoyer">
+							</form>
+					
+					{% endif %}
+					
 				</ul>
 			{% endif %}
 		{% endmacro %}
