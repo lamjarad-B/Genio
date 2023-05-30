@@ -75,7 +75,8 @@ class PersonneRepository extends ServiceEntityRepository
 
     public function createTree(
         string $nomProprietaire, 
-        string $prenomProprietaire, 
+        string $prenomProprietaire,
+        string $sexe,
         ?DateTime $date_naissance_Proprietaire, 
         ?DateTime $date_deces_Proprietaire, 
         ?string $lieu_naissance_Proprietaire,
@@ -92,8 +93,8 @@ class PersonneRepository extends ServiceEntityRepository
         ?string $lieu_naissance_mere
         ){
         $user = $this->entityManager->getRepository(User::class)->find($userId);
-       $propietaire = (new Personne())->setNom($nomProprietaire)->setPrenom($prenomProprietaire)->setDateNaissance($date_naissance_Proprietaire)->setSexe("M")->setDateDeces($date_deces_Proprietaire)->setLieuNaissance($lieu_naissance_Proprietaire)->setUser($user);
-       $pere = (new Personne())->setNom($nom)->setPrenom($prenom)->setDateNaissance($date_naissance)->setSexe("M")->setDateDeces($date_deces)->setLieuNaissance($lieu_naissance);
+       $propietaire = (new Personne())->setNom($nomProprietaire)->setPrenom($prenomProprietaire)->setDateNaissance($date_naissance_Proprietaire)->setSexe($sexe)->setDateDeces($date_deces_Proprietaire)->setLieuNaissance($lieu_naissance_Proprietaire)->setUser($user);
+       $pere = (new Personne())->setNom($nom)->setPrenom($prenom)->setDateNaissance($date_naissance)->setSexe('M')->setDateDeces($date_deces)->setLieuNaissance($lieu_naissance);
        $mere = (new Personne())->setNom($nomMere)->setPrenom($prenomMere)->setDateNaissance($date_naissance_mere)->setSexe("F")->setDateDeces($date_deces_mere)->setLieuNaissance($lieu_naissance_mere);
 
        $pereRelation = $this->entityManager->getRepository(TypeRelation::class)->findOneBy(["nom_relation"=>"père"]);
@@ -119,6 +120,47 @@ class PersonneRepository extends ServiceEntityRepository
 
     }
 
+    public function addAncetors(
+        
+        int $personId,
+        string $nom, 
+        string $prenom, 
+        ?DateTime $date_naissance, 
+        ?DateTime $date_deces, 
+        ?string $lieu_naissance, 
+        string $nomMere, 
+        string $prenomMere, 
+        ?DateTime $date_naissance_mere, 
+        ?DateTime $date_deces_mere, 
+        ?string $lieu_naissance_mere
+        ){
+           // dd($personId);
+        $enfant = $this->entityManager->getRepository(Personne::class)->find($personId);
+       $pere = (new Personne())->setNom($nom)->setPrenom($prenom)->setDateNaissance($date_naissance)->setSexe("M")->setDateDeces($date_deces)->setLieuNaissance($lieu_naissance);
+       $mere = (new Personne())->setNom($nomMere)->setPrenom($prenomMere)->setDateNaissance($date_naissance_mere)->setSexe("F")->setDateDeces($date_deces_mere)->setLieuNaissance($lieu_naissance_mere);
+            
+       $pereRelation = $this->entityManager->getRepository(TypeRelation::class)->findOneBy(["nom_relation"=>"père"]);
+       $enfantRelation = $this->entityManager->getRepository(TypeRelation::class)->findOneBy(["nom_relation"=>"enfant"]);
+       $mereRelation = $this->entityManager->getRepository(TypeRelation::class)->findOneBy(["nom_relation"=>"mère"]);
+
+       $relation1 = (new Relation())->setPersonne1($pere)->setRelationType($pereRelation)->setPersonne2($enfant);
+       $relation2 = (new Relation())->setPersonne2($pere)->setRelationType($enfantRelation)->setPersonne1($enfant);
+       $relation3 = (new Relation())->setPersonne1($mere)->setRelationType($mereRelation)->setPersonne2($enfant);
+       $relation4 = (new Relation())->setPersonne2($mere)->setRelationType($enfantRelation)->setPersonne1($enfant);
+
+       //$this->entityManager->persist($enfant);
+
+       $this->entityManager->persist($pere);
+       $this->entityManager->persist($mere);
+       $this->entityManager->persist($relation1);
+       $this->entityManager->persist($relation2);
+       $this->entityManager->persist($relation3);
+       $this->entityManager->persist($relation4);
+       
+       $this->entityManager->flush();
+       
+
+    }
 
 
     // public function getAncestors(Connection $connection, int $personId): array

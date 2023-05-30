@@ -60,6 +60,7 @@ class CreateTreeController extends AbstractController
             $personne3 = $form->get('groupe_mere')->getData();
             //dd($personne1);
 
+            $sexeProprietaire = $personne1['sexe'];
             $nomProprietaire = $personne1['nom'];
             $prenomProprietaire = $personne1['prenom'];
             $date_naissance_Proprietaire = $personne1['date_naissance'];
@@ -81,6 +82,7 @@ class CreateTreeController extends AbstractController
             $this->entityManager->getRepository(Personne::class)->createTree(
                 $nomProprietaire,
                 $prenomProprietaire,
+                $sexeProprietaire,
                 $date_naissance_Proprietaire,
                 $date_deces_Proprietaire,
                 $lieu_naissance_Proprietaire,

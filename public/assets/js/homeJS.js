@@ -1,5 +1,6 @@
-// $(document).ready(function(){
-//     let mbFifthChild = $("mb-3:nth-child(5)");
-//     mbFifthChild.setAttribute("id", "mbFifthChild");
+$( document ).ready( function ()
+{
+    // $( " ul ul:last-child li" ).css({ color:"red", fontSize:"80%" });
 
-// });
+});
+

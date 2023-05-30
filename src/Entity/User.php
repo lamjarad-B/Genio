@@ -30,7 +30,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $prenom = null;
 
     #[ORM\Column(type: 'json')]
-    private $roles = [];
+    private $roles = ["ROLE_USER"];
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Personne::class)]
     private Collection $personnes;
