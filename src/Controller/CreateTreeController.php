@@ -105,7 +105,8 @@ class CreateTreeController extends AbstractController
         }
 
         return $this->render('create_tree/index.html.twig', [
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'user' => $user
         ]);
     }
 }

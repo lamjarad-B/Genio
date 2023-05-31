@@ -41,12 +41,23 @@
             </div>
             
             <ul class="nav-list">
-                    <li><a href="#" class="links">Accueil</a></li>
+                    <li><a href="href="{{ path('app_home')}}"" class="links">Accueil</a></li>
                     <li><a href="#" class="links">Recherche</a></li>
                     <li><a href="#" class="links">Arbre</a></li>
                     <li><a href="#" class="links">Mon compte</a></li>
-                    <li><button class="links">Connexion</button></li>
-                    <li><button class="links">Inscription</button></li>
+                    {% if user is null %}
+                    <li><button class="links">
+                        
+                        <a href="{{ path('app_login')}}">{{cnx}}</a>
+                    </button></li>
+                    {% endif %}
+                    {% if user %}
+                    <li><button class="links">
+                        
+                        <a href="{{ path('app_logout')}}">{{cnx}}</a>
+                    </button></li>
+                    {% endif %}
+                    <li><button class="links"><a href="{{ path('app_register')}}">Inscription</a></button></li>
             </ul>
         </nav>
     </div>

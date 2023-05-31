@@ -22,6 +22,13 @@ class GedcomImportController extends AbstractController
     #[Route('/import', name: 'app_import')]
     public function excelCommunesAction(Request $request, FileUploader $file_uploader)
     {
+        $user = $this->getUser();
+        if (!$user) {
+            $cnx = "Connexion";
+        }
+        else{
+            $cnx = "Déconnexion";
+        }
         $form = $this->createForm(FileUploadType::class);
         $form->handleRequest($request);
         $fileUploaded = false;
@@ -329,6 +336,8 @@ class GedcomImportController extends AbstractController
         return $this->render('gedcom_import/index.html.twig', [
             'form' => $form->createView(),
             'fileUploaded' => $fileUploaded,
+            'cnx' => $cnx,
+            'user' => $user
         ]);
     }
 

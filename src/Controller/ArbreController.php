@@ -21,18 +21,47 @@ class ArbreController extends AbstractController
     }
 
     #[Route('/arbre', name: 'app_arbre')]
-    public function index(Connection $connection, Request $request, ArbreRepository $arbreRepository): Response
-    {
+    public function index(Connection $connection, Request $request, ArbreRepository $arbreRepository, EntityManagerInterface $entityManager): Response
+    {   
+        $user = $this->getUser();
+        if($user){
+            $cnx = "Déconnexion";
+            $queryBuilder = $entityManager->createQueryBuilder();
+
+            $personneRepository = $this->entityManager->getRepository(Personne::class);
+
+            $userId = $user->getId();
+
+            $query = $queryBuilder
+                ->select('p.id')
+                ->from('App\Entity\Personne', 'p')
+                ->where('p.user = :userId')
+                ->setParameter('userId', $userId)
+                ->getQuery();
+
+            $personId = $query->getSingleScalarResult();
+            //dd( $personId);
+            $personne = $personneRepository->find($personId);
+            //dd( $personne);
+
+            $ancestors = $arbreRepository->getAncestors($personId);
+        }
+       else{
+        $cnx = "Connexion";
         $personneRepository = $this->entityManager->getRepository(Personne::class);
         $personId = $request->get('id');
         $personne = $personneRepository->find($personId);
         
         $ancestors = $arbreRepository->getAncestors($personId);
        // dd($ancestors);
+       }
         
         return $this->render('arbre/index.html.twig', [
             'personne' => $personne,
-            'ancestors' => $ancestors
+            'ancestors' => $ancestors,
+            'originId' => $personId,
+            'user' => $user,
+            'cnx' => $cnx
         ]);
     }
 }

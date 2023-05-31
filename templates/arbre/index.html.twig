@@ -12,13 +12,13 @@
 
 	<ul>
 		{# Fonction pour afficher les parents d'une personne #}
-		{% macro displayParents(ancestors, personId) %}
+		{% macro displayParents(ancestors, personId, originId) %}
 			{% set person = ancestors|filter(v => v.id == personId)|first %}
-
 			{# On vérifie que la personne existe bien #}
+			
 			{% if person is not null %}
 				{# On affiche l'origine de l'arbre uniquement pour la personne recherchée #}
-				{% if person.id == app.request.query.get("id") %}
+				{% if person.id == originId %}
 					<li>
 						{{ person.nom }} {{ person.prenom }} ({{ person.sexe }})
 
@@ -73,6 +73,11 @@
 		{% endmacro %}
 
 		{# Appel initial de la fonction pour la personne recherchée #}
-		{{ _self.displayParents(ancestors, app.request.query.get("id")) }}
+		{{ _self.displayParents(ancestors, originId, originId) }}
 	</ul>
+
+	{# Si on est connecté, on devrait pouvoir editer notre arbre #}
+	{% if user is not null %}
+		<button><a href="{{ path('app_edit_tree')}}">Editer votre arbre</a></button>
+	{% endif %}
 {% endblock %}

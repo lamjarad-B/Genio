@@ -31,6 +31,13 @@ class RegisterController extends AbstractController
     #[Route('/register', name: 'app_register')]
     public function index(Request $request, UserPasswordHasherInterface $passwordHasher): Response
     {
+        $user = $this->getUser();
+        if (!$user) {
+            $cnx = "Connexion";
+        }
+        else{
+            $cnx = "Déconnexion";
+        }
         $user = new User();
         $form = $this->createForm( RegisterType::class, $user);
         $form->handleRequest($request);// Ecouter la requette entrante (l'objet request)
@@ -56,7 +63,9 @@ class RegisterController extends AbstractController
 
         return $this->render('register/index.html.twig',
         [
-            'form' => $form->createView() // appeler la variable $form et creer la view de ce formulaire
+            'form' => $form->createView(), // appeler la variable $form et creer la view de ce formulaire
+            'cnx' => $cnx,
+            'user' => $user
         ]);
     }
 }

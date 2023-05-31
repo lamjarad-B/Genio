@@ -19,9 +19,17 @@ class HomeController extends AbstractController
         $this->entityManager = $entityManager;
     }
 
-    #[Route('/home', name: 'app_home')]
+    #[Route('', name: 'app_home')]
     public function index(Request $request): Response
     {
+        $user = $this->getUser();
+        if (!$user) {
+            $cnx = "Connexion";
+        }
+        else{
+            $cnx = "Déconnexion";
+        }
+
         // Crée un objet Personne vide pour l'utiliser pour créer le formulaire.
         $personne = new Personne();
 
@@ -45,6 +53,8 @@ class HomeController extends AbstractController
             // Retourne le résultat de la recherche
             return $this->render('home/search.html.twig', [
                 'personnes' => $personnes,
+                 'cnx' => $cnx,
+                 'user' => $user
             ]);
             
         }
@@ -52,7 +62,9 @@ class HomeController extends AbstractController
 
         return $this->render('home/index.html.twig',
         [
-            'form' => $form->createView() // appeler la variable $form et creer la view de ce formulaire
+            'form' => $form->createView(), // appeler la variable $form et creer la view de ce formulaire
+            'cnx' => $cnx,
+            'user' => $user
         ]);
 
         
