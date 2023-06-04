@@ -74,6 +74,7 @@ class EditTreeController extends AbstractController
 
         $date_naissance = $request->request->get('pere_date_naissance');
         $date_naissance = new DateTime($date_naissance);
+        //$date_naissance = $date_naissance->format('Y/m/d');
 
         $date_deces = $request->request->get('pere_date_deces');
         $date_deces = new DateTime($date_deces);

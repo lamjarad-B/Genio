@@ -4,19 +4,24 @@ $( document ).ready( function ()
 	{
 		event.preventDefault();
 
-		const container = $( event.currentTarget ).parent();
-		const form = container.children().first().next();
+		const container = $(event.currentTarget).parent();
+		const form = container.find("form.addAncetors");
 
-		const pere_nom = form.children().find( "input[name = 'pere_nom']" ).val();
-		const pere_prenom = form.children().find( "input[name = 'pere_prenom']" ).val();
-		const pere_date_naissance = form.children().find( "input[name = 'pere_date_naissance']" ).val();
-		const pere_date_deces = form.children().find( "input[name = 'pere_date_deces']" ).val();
-		const pere_lieu_naissance = form.children().find( "input[name = 'pere_lieu_naissance']" ).val();
-		const mere_nom = form.children().find( "input[name = 'mere_nom']" ).val();
-		const mere_prenom = form.children().find( "input[name = 'mere_prenom']" ).val();
-		const mere_date_naissance = form.children().find( "input[name = 'mere_date_naissance']" ).val();
-		const mere_date_deces = form.children().find( "input[name = 'mere_date_deces']" ).val();
-		const mere_lieu_naissance = form.children().find( "input[name = 'mere_lieu_naissance']" ).val();
+		const pere_nom = form.find("input[name='pere_nom']").val();
+		const pere_prenom = form.find("input[name='pere_prenom']").val();
+		const pere_date_naissance = form.find("input[name='pere_date_naissance']").val();
+		const pere_date_deces = form.find("input[name='pere_date_deces']").val();
+		const pere_lieu_naissance = form.find("input[name='pere_lieu_naissance']").val();
+		const mere_nom = form.find("input[name='mere_nom']").val();
+		const mere_prenom = form.find("input[name='mere_prenom']").val();
+		const mere_date_naissance = form.find("input[name='mere_date_naissance']").val();
+		const mere_date_deces = form.find("input[name='mere_date_deces']").val();
+		const mere_lieu_naissance = form.find("input[name='mere_lieu_naissance']").val();
+		console.log(pere_date_naissance);
+		console.log(pere_prenom);
+		console.log(container);
+		console.log(form);
+		console.log(form.children());
 
 		fetch( "/addAncetors", {
 			method: "POST",
@@ -36,6 +41,7 @@ $( document ).ready( function ()
 				mere_date_deces: mere_date_deces,
 				mere_lieu_naissance: mere_lieu_naissance
 			} )
+			
 		} ).then( function ( response )
 		{
 			return response.json();
@@ -146,7 +152,7 @@ $( document ).ready( function ()
 					</form>
 				</ul>`
 			);
-
+			//console.log("test");
 			$( ".addAncetors" ).submit( action );
 		} ).catch( function ( error )
 		{
@@ -160,7 +166,7 @@ $( document ).ready( function ()
 
 
 	// Editer une personne
-	function action( event )
+	function actionEdit( event )
 	{
 		event.preventDefault();
 
@@ -194,10 +200,10 @@ $( document ).ready( function ()
 		return false;
 	}
 
-	$( ".editAncetors" ).submit( action );
+	$( ".editAncetors" ).submit( actionEdit );
 
 	// Supprimer une personne
-	function action( event )
+	function actionDelete( event )
 	{
 		event.preventDefault();
 
@@ -217,5 +223,5 @@ $( document ).ready( function ()
 		return false;
 	}
 
-	$( ".deleteAncetors" ).submit( action );
+	$( ".deleteAncetors" ).submit( actionDelete );
 } );
