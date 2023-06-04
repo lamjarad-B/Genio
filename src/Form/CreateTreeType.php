@@ -64,14 +64,14 @@ class CreateTreeType extends AbstractType
                     //'format' => 'dd-MM-yyyy',
                     'empty_data' => null
                 ])
-                ->add('date_deces', DateType::class, [
-                    'label' => 'Date de décès',
-                    'required' => false,
-                    'widget' => 'single_text',
-                    //'html5' => false,
-                    //'format' => 'dd-MM-yyyy',
-                    'empty_data' => null,
-                ])
+                // ->add('date_deces', DateType::class, [
+                //     'label' => 'Date de décès',
+                //     'required' => false,
+                //     'widget' => 'single_text',
+                //     //'html5' => false,
+                //     //'format' => 'dd-MM-yyyy',
+                //     'empty_data' => null,
+                // ])
                 ->add('lieu_naissance', TextType::class, [
                     'label' => 'Lieu de naissance',
                     'required' => false,
@@ -96,6 +96,7 @@ class CreateTreeType extends AbstractType
                         'min' => 2,
                         'max' => 30
                     ]),
+                    'data' => $options['data']->getNom(),
                     'attr' => ['placeholder' => 'Nom de naissance']
                 ])
                 ->add('prenom', TextType::class, [
@@ -119,17 +120,19 @@ class CreateTreeType extends AbstractType
                     'label' => 'Date de décès',
                     'required' => false,
                     'widget' => 'single_text',
-                    //'html5' => false,
-                    //'format' => 'dd-MM-yyyy',
+                    // 'html5' => false,
+                    // 'format' => 'dd-MM-yyyy',
                     'empty_data' => null,
+                    //'attr' => ['placeholder' => 'dd-mm-aaaa']
                 ])
+                
                 ->add('lieu_naissance', TextType::class, [
                     'label' => 'Lieu de naissance',
                     'required' => false,
                     'constraints' => new Length([
                         'min' => 2,
                         'max' => 30,
-                    ])
+                    ]),
                 ])
             )
             ->add(
@@ -161,17 +164,19 @@ class CreateTreeType extends AbstractType
                     'label' => 'Date de naissance',
                     'required' => false,
                     'widget' => 'single_text',
-                    //'html5' => false,
-                    //'format' => 'dd-MM-yyyy',
-                    'empty_data' => null
+                    // 'html5' => false,
+                    // 'format' => 'dd-MM-yyyy',
+                    'empty_data' => null,
+                    //'attr' => ['placeholder' => 'dd-mm-aaaa']
                 ])
                 ->add('date_deces', DateType::class, [
                     'label' => 'Date de décès',
                     'required' => false,
                     'widget' => 'single_text',
-                    //'html5' => false,
-                    //'format' => 'dd-MM-yyyy',
+                    // 'html5' => false,
+                    // 'format' => 'dd-MM-yyyy',
                     'empty_data' => null,
+                    //'attr' => ['placeholder' => 'dd-mm-aaaa']
                 ])
                 ->add('lieu_naissance', TextType::class, [
                     'label' => 'Lieu de naissance',
@@ -213,9 +218,10 @@ class CreateTreeType extends AbstractType
                     'required' => false,
                     //'mapped' => false,
                     'widget' => 'single_text',
-                    //'html5' => false,
-                    //'format' => 'dd-MM-yyyy',
-                    'empty_data' => null
+                    // 'html5' => false,
+                    // 'format' => 'dd-MM-yyyy',
+                    'empty_data' => null,
+                    //'attr' => ['placeholder' => 'dd-mm-aaaa']
                 ])
                     
                 ->add('date_deces', DateType::class, [
@@ -223,9 +229,10 @@ class CreateTreeType extends AbstractType
                     'required' => false,
                     //'mapped' => false,
                     'widget' => 'single_text',
-                    //'html5' => false,
-                    //'format' => 'dd-MM-yyyy',
+                    // 'html5' => false,
+                    // 'format' => 'dd-MM-yyyy',
                     'empty_data' => null,
+                    //'attr' => ['placeholder' => 'dd-mm-aaaa']
                 ])
                 
                 ->add('lieu_naissance', TextType::class, [

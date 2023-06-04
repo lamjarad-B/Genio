@@ -78,7 +78,7 @@ class PersonneRepository extends ServiceEntityRepository
         string $prenomProprietaire,
         string $sexe,
         ?DateTime $date_naissance_Proprietaire, 
-        ?DateTime $date_deces_Proprietaire, 
+        //?DateTime $date_deces_Proprietaire, 
         ?string $lieu_naissance_Proprietaire,
         ?int $userId,
         string $nom, 
@@ -93,7 +93,7 @@ class PersonneRepository extends ServiceEntityRepository
         ?string $lieu_naissance_mere
         ){
         $user = $this->entityManager->getRepository(User::class)->find($userId);
-       $propietaire = (new Personne())->setNom($nomProprietaire)->setPrenom($prenomProprietaire)->setDateNaissance($date_naissance_Proprietaire)->setSexe($sexe)->setDateDeces($date_deces_Proprietaire)->setLieuNaissance($lieu_naissance_Proprietaire)->setUser($user);
+       $propietaire = (new Personne())->setNom($nomProprietaire)->setPrenom($prenomProprietaire)->setDateNaissance($date_naissance_Proprietaire)->setSexe($sexe)->setLieuNaissance($lieu_naissance_Proprietaire)->setUser($user);
        $pere = (new Personne())->setNom($nom)->setPrenom($prenom)->setDateNaissance($date_naissance)->setSexe('M')->setDateDeces($date_deces)->setLieuNaissance($lieu_naissance);
        $mere = (new Personne())->setNom($nomMere)->setPrenom($prenomMere)->setDateNaissance($date_naissance_mere)->setSexe("F")->setDateDeces($date_deces_mere)->setLieuNaissance($lieu_naissance_mere);
 

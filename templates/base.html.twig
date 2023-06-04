@@ -57,7 +57,9 @@
                         <a href="{{ path('app_logout')}}">{{cnx}}</a>
                     </button></li>
                     {% endif %}
+                    {% if user is null %}
                     <li><button class="links"><a href="{{ path('app_register')}}">Inscription</a></button></li>
+                    {% endif %}
             </ul>
         </nav>
     </div>

@@ -19,7 +19,7 @@ class ArbreRepository extends ServiceEntityRepository
     public function getAncestors(int $personId, array &$ancestors = []): array
 {
     $connection = $this->getEntityManager()->getConnection();
-    $sql = 'SELECT DISTINCT p.id, p.nom, p.prenom, p.date_naissance, p.date_deces, p.sexe, r.personne1_id, r.relation_type_id, r.personne2_id
+    $sql = 'SELECT DISTINCT p.id, p.nom, p.prenom, p.date_naissance, p.date_deces, p.sexe, p.lieu_naissance, r.personne1_id, r.relation_type_id, r.personne2_id
             FROM personne p
             LEFT JOIN relation r ON p.id IN (r.personne1_id, r.personne2_id) AND r.relation_type_id IN (SELECT id FROM type_relation WHERE nom_relation IN (:pere, :mere))
             WHERE p.id = :personId

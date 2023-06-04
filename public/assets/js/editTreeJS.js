@@ -157,4 +157,65 @@ $( document ).ready( function ()
 	}
 
 	$( ".addAncetors" ).submit( action );
+
+
+	// Editer une personne
+	function action( event )
+	{
+		event.preventDefault();
+
+		// const container = $( event.currentTarget ).parent();
+		// const form = container.children().first().next();
+
+		const nom = $( "input[name = 'nom']" ).val();
+		const prenom = $( "input[name = 'prenom']" ).val();
+		const date_naissance = $( "input[name = 'date_naissance']" ).val();
+		const date_deces = $( "input[name = 'date_deces']" ).val();
+		const lieu_naissance = $( "input[name = 'lieu_naissance']" ).val();
+
+		fetch( "/editAncetors", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/x-www-form-urlencoded"
+			},
+			body: new URLSearchParams( {
+				personId: $( ".editAncetors" ).attr( "data-id" ),
+				nom: nom,
+				prenom: prenom,
+				date_naissance: date_naissance,
+				date_deces: date_deces,
+				lieu_naissance: lieu_naissance,
+			} )
+		} ).catch( function ( error )
+		{
+			console.log( error );
+		} );
+
+		return false;
+	}
+
+	$( ".editAncetors" ).submit( action );
+
+	// Supprimer une personne
+	function action( event )
+	{
+		event.preventDefault();
+
+		fetch( "/deleteAncetors", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/x-www-form-urlencoded"
+			},
+			body: new URLSearchParams( {
+				personId: $( ".deleteAncetors" ).attr( "data-id" ),
+			} )
+		} ).catch( function ( error )
+		{
+			console.log( error );
+		} )
+
+		return false;
+	}
+
+	$( ".deleteAncetors" ).submit( action );
 } );

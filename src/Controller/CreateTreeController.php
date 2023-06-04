@@ -34,6 +34,13 @@ class CreateTreeController extends AbstractController
             throw $this->createAccessDeniedException('Vous devez être connecté pour accéder à cette page.');
         }
 
+        if (!$user) {
+            $cnx = "Connexion";
+        }
+        else{
+            $cnx = "Déconnexion";
+        }
+
         // Crée des objets Personne vide pour l'utiliser pour créer le formulaire.
         $personne1 = new Personne();
         $personne2 = new Personne();
@@ -64,7 +71,7 @@ class CreateTreeController extends AbstractController
             $nomProprietaire = $personne1['nom'];
             $prenomProprietaire = $personne1['prenom'];
             $date_naissance_Proprietaire = $personne1['date_naissance'];
-            $date_deces_Proprietaire = $personne1['date_deces'];
+            //$date_deces_Proprietaire = $personne1['date_deces'];
             $lieu_naissance_Proprietaire = $personne1['lieu_naissance'];
 
             $nom = $personne2['nom'];
@@ -84,7 +91,7 @@ class CreateTreeController extends AbstractController
                 $prenomProprietaire,
                 $sexeProprietaire,
                 $date_naissance_Proprietaire,
-                $date_deces_Proprietaire,
+                //$date_deces_Proprietaire,
                 $lieu_naissance_Proprietaire,
                 $userId,
                 $nom,
@@ -106,7 +113,8 @@ class CreateTreeController extends AbstractController
 
         return $this->render('create_tree/index.html.twig', [
             'form' => $form->createView(),
-            'user' => $user
+            'user' => $user,
+            'cnx' => $cnx
         ]);
     }
 }
