@@ -8,6 +8,15 @@
         <p>Date de décès : {{ personne.dateDeces|date('d/m/Y') }}</p>
     {% endif %}
 
+	<h2>Conjoint(e)</h2>
+	{# {% if conjoint is not null %}
+		<p><strong>{{ conjoint.nom }} {{ conjoint.prenom }}</strong></p>
+	{% endif %}
+
+	{% if conjoint is null %}
+		<p>Pas de conjoint(e) trouvé(e)</p>
+	{% endif %} #}
+
     <h2>Ancêtres</h2>
 
 	<ul>
@@ -204,9 +213,35 @@
 					{% endif %}
 				</ul>
 			{% endif %}
+
+						
 		{% endmacro %}
 
 		{# Appel initial de la fonction pour la personne recherchée #}
 		{{ _self.displayParents(ancestors, originId, originId) }}
 	</ul>
+
+	<div id="formPartner">
+		<button id="addPartnerButton">Ajouter un conjoint(e)</button>
+		<form class="addPartner" method="POST" action="/addPartner">
+			<div>
+				<label for="nom_conjoint">Nom:</label>
+				<input type="text" id="nom_conjoint" name="nom_conjoint" required><br>
+
+				<label for="prenom">Prénom:</label>
+				<input type="text" id="prenom_conjoint" name="prenom_conjoint" required><br>
+
+				<label for="date_naissance_conjoint">Date de naissance:</label>
+				<input type="date" id="date_naissance_conjoint" name="date_naissance_conjoint" ><br>
+
+				<label for="date_deces_conjoint">Date de décès:</label>
+				<input type="date" id="date_deces_conjoint" name="date_deces_conjoint"><br>
+
+				<label for="lieu_naissance">Lieu de naissance:</label>
+				<input type="text" id="lieu_naissance_conjoint" name="lieu_naissance_conjoint"><br>
+			</div>
+
+			<input type="submit" name="addPartner" value="Valider">
+		</form>
+	</div>
 {% endblock %}

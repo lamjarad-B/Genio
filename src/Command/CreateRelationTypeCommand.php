@@ -31,12 +31,12 @@ class CreateRelationTypeCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $pere = (new TypeRelation())->setNomRelation("père");
-        $this->entityManager->persist($pere);
-        $mere = (new TypeRelation())->setNomRelation("mère");
-        $this->entityManager->persist($mere);
-        $enfant = (new TypeRelation())->setNomRelation("enfant");
-        $this->entityManager->persist($enfant);
+        // $pere = (new TypeRelation())->setNomRelation("père");
+        // $this->entityManager->persist($pere);
+        $conjoint = (new TypeRelation())->setNomRelation("conjoint(e)");
+        $this->entityManager->persist($conjoint);
+        $fraterie = (new TypeRelation())->setNomRelation("fraterie");
+        $this->entityManager->persist($fraterie);
 
         $this->entityManager->flush();
 

@@ -5,3 +5,13 @@ form.addAncetors {
 form.editAncetors {
   display: none;
 }
+
+form.addPartner {
+  display: none;
+}
+
+#formPartner {
+  position: absolute;
+  top: 15%;
+  right: 15%;
+}

@@ -173,6 +173,32 @@ class PersonneRepository extends ServiceEntityRepository
 		$this->entityManager->flush();
     }
 
+    public function addPartner(
+        int $personId,
+        string $nom_conjoint,
+        string $prenom_conjoint,
+        string $sexe_conjoint,
+        ?DateTime $date_naissance_conjoint,
+        ?DateTime $date_deces_conjoint,
+        ?string $lieu_naissance_conjoint,
+        ){
+        $person = $this->entityManager->getRepository(Personne::class)->find($personId);
+        //dd($person);
+        $conjoint = (new Personne())->setNom($nom_conjoint)->setPrenom($prenom_conjoint)->setDateNaissance($date_naissance_conjoint)->setDateDeces($date_deces_conjoint)->setSexe($sexe_conjoint)->setLieuNaissance($lieu_naissance_conjoint);
+
+        $conjointRelation = $this->entityManager->getRepository(TypeRelation::class)->findOneBy(["nom_relation"=>"conjoint(e)"]);
+
+        $relation = (new Relation())->setPersonne1($person)->setRelationType($conjointRelation)->setPersonne2($conjoint);
+
+        $this->entityManager->persist($conjoint);
+
+        $this->entityManager->persist($relation);
+
+
+        $this->entityManager->flush();
+
+
+    }
 
     // public function getAncestors(Connection $connection, int $personId): array
     // {

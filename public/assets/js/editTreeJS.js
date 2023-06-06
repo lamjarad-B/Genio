@@ -296,11 +296,6 @@ $( document ).ready( function ()
 	{
 		event.preventDefault();
 
-		if ( true )
-		{
-			return false;
-		}
-
 		const form = $( event.currentTarget );
 
 		fetch( "/deleteAncetors", {
