@@ -10,4 +10,16 @@ $( document ).ready( function ()
         $(this).nextAll("form.deleteAncetors:first").slideToggle();
     });
 
+    // La legends Vous 
+    $("legend").filter(function() {
+        return $(this).text().trim() === "Vous";
+    }).addClass("vous");
+    $("legend").filter(function() {
+        return $(this).text().trim() === "Père";
+    }).addClass("pere");
+    $("legend").filter(function() {
+        return $(this).text().trim() === "Mère";
+    }).addClass("mere");
+
+
 });

@@ -1,4 +1,117 @@
-legend.required{
-    font-size: 2rem;
-    // font-weight: bold;
+body{
+    h1{
+        margin-bottom: 1rem;
+    }
 }
+
+form[name="create_tree"]{
+    position: relative;
+    width: 80%;
+    height: 100vh;
+    .vous{
+        position: absolute;
+        left: 5%;
+        top: 28%;
+        font-size: 2rem;
+    }
+    .pere{
+        position: absolute;
+        left: 60%;
+        top: -2%;
+        font-size: 2rem;
+    }
+    .mere{
+        position: absolute;
+        left: 60%;
+        top: 58%;
+        font-size: 2rem;
+    }
+
+    .col-form-label{
+        padding: 0;
+    }
+    
+    
+    .form-label{
+        margin: 0 10px 0 20px;
+    }
+    
+    .form-control {
+        width: 90%;
+        margin: 0 auto;
+        //padding: .5rem;
+    }
+    .mb-3 {
+        margin: 0;
+    }
+    
+    #create_tree_groupe_proprietaire_sexe {
+        display: flex;
+        margin: .5rem 0 0 1rem;
+        left: 20%;
+        label{
+            margin-right: .5rem;
+        }
+    }
+    
+    
+    #create_tree_groupe_proprietaire {
+        position: absolute;
+        //align-content: flex-start;
+        left: 5%;
+        top: 35%;
+        background-color: #8BAD89;
+        border-radius: 5px;
+        width: 40%;
+          &::after {
+            content: "";
+            position: absolute;
+            top: 25%;
+            left: 100%;
+            width: 38%;
+            height: 1px;
+            background-color: black;
+          }
+    }
+      
+    #create_tree_groupe_pere,
+    #create_tree_groupe_mere {
+        /* height:300px; */
+        background-color: #D0E9DC;
+        border-radius: 5px;
+        width: 40%;
+        // flex-basis: 65%;
+        // float: right;
+    }
+      
+    #create_tree_groupe_pere {
+        position : absolute;
+        top: 5%;
+        left: 60%;
+        
+    }
+    
+    #create_tree_groupe_mere {
+        position : absolute;
+        top: 65%;
+        left: 60%;
+        &::after {
+            content: "";
+            position: absolute;
+            top: 25%;
+            right: 100%;
+            width: 38%;
+            height: 1px;
+            background-color: black;
+          }
+    }
+    
+    #create_tree_submit {
+        position : absolute;
+        top: 55%;
+        right: -25%;
+        /* justify-content: center; */
+    
+    }  
+}
+

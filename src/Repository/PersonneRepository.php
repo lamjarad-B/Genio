@@ -14,7 +14,7 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class PersonneRepository extends ServiceEntityRepository
 {
-    
+
     private $entityManager;
     public function __construct(ManagerRegistry $registry, EntityManagerInterface $entityManager)
     {
@@ -30,7 +30,7 @@ class PersonneRepository extends ServiceEntityRepository
         return $repository->findOneBy($criteria, $orderBy);
     }
 
-    
+
 
     public function findBySearchCriteria(object $criteria, ?string $nomConjoint, ?string $prenomConjoint, ?int $limit = null)
     {
@@ -74,22 +74,22 @@ class PersonneRepository extends ServiceEntityRepository
 
 
     public function createTree(
-        string $nomProprietaire, 
+        string $nomProprietaire,
         string $prenomProprietaire,
         string $sexe,
-        ?DateTime $date_naissance_Proprietaire, 
-        //?DateTime $date_deces_Proprietaire, 
+        ?DateTime $date_naissance_Proprietaire,
+        //?DateTime $date_deces_Proprietaire,
         ?string $lieu_naissance_Proprietaire,
         ?int $userId,
-        string $nom, 
-        string $prenom, 
-        ?DateTime $date_naissance, 
-        ?DateTime $date_deces, 
-        ?string $lieu_naissance, 
-        string $nomMere, 
-        string $prenomMere, 
-        ?DateTime $date_naissance_mere, 
-        ?DateTime $date_deces_mere, 
+        string $nom,
+        string $prenom,
+        ?DateTime $date_naissance,
+        ?DateTime $date_deces,
+        ?string $lieu_naissance,
+        string $nomMere,
+        string $prenomMere,
+        ?DateTime $date_naissance_mere,
+        ?DateTime $date_deces_mere,
         ?string $lieu_naissance_mere
         ){
         $user = $this->entityManager->getRepository(User::class)->find($userId);
@@ -114,59 +114,70 @@ class PersonneRepository extends ServiceEntityRepository
        $this->entityManager->persist($relation2);
        $this->entityManager->persist($relation3);
        $this->entityManager->persist($relation4);
-        
+
        $this->entityManager->flush();
-       
+
 
     }
 
     public function addAncetors(
-        
         int $personId,
-        string $nom, 
-        string $prenom, 
-        ?DateTime $date_naissance, 
-        ?DateTime $date_deces, 
-        ?string $lieu_naissance, 
-        string $nomMere, 
-        string $prenomMere, 
-        ?DateTime $date_naissance_mere, 
-        ?DateTime $date_deces_mere, 
+        ?string $nom,
+        ?string $prenom,
+        ?DateTime $date_naissance,
+        ?DateTime $date_deces,
+        ?string $lieu_naissance,
+        ?string $nomMere,
+        ?string $prenomMere,
+        ?DateTime $date_naissance_mere,
+        ?DateTime $date_deces_mere,
         ?string $lieu_naissance_mere
-        ){
-           // dd($personId);
-        $enfant = $this->entityManager->getRepository(Personne::class)->find($personId);
-       $pere = (new Personne())->setNom($nom)->setPrenom($prenom)->setDateNaissance($date_naissance)->setSexe("M")->setDateDeces($date_deces)->setLieuNaissance($lieu_naissance);
-       $mere = (new Personne())->setNom($nomMere)->setPrenom($prenomMere)->setDateNaissance($date_naissance_mere)->setSexe("F")->setDateDeces($date_deces_mere)->setLieuNaissance($lieu_naissance_mere);
-            
-       $pereRelation = $this->entityManager->getRepository(TypeRelation::class)->findOneBy(["nom_relation"=>"père"]);
-       $enfantRelation = $this->entityManager->getRepository(TypeRelation::class)->findOneBy(["nom_relation"=>"enfant"]);
-       $mereRelation = $this->entityManager->getRepository(TypeRelation::class)->findOneBy(["nom_relation"=>"mère"]);
+    )
+	{
+		$enfant = $this->entityManager->getRepository(Personne::class)->find($personId);
 
-       $relation1 = (new Relation())->setPersonne1($pere)->setRelationType($pereRelation)->setPersonne2($enfant);
-       $relation2 = (new Relation())->setPersonne2($pere)->setRelationType($enfantRelation)->setPersonne1($enfant);
-       $relation3 = (new Relation())->setPersonne1($mere)->setRelationType($mereRelation)->setPersonne2($enfant);
-       $relation4 = (new Relation())->setPersonne2($mere)->setRelationType($enfantRelation)->setPersonne1($enfant);
+		if ($nom)
+		{
+			$pere = (new Personne())->setNom($nom)->setPrenom($prenom)->setDateNaissance($date_naissance)->setSexe("M")->setDateDeces($date_deces)->setLieuNaissance($lieu_naissance);
+		}
 
-       //$this->entityManager->persist($enfant);
+		if ($nomMere)
+		{
+			$mere = (new Personne())->setNom($nomMere)->setPrenom($prenomMere)->setDateNaissance($date_naissance_mere)->setSexe("F")->setDateDeces($date_deces_mere)->setLieuNaissance($lieu_naissance_mere);
+		}
 
-       $this->entityManager->persist($pere);
-       $this->entityManager->persist($mere);
-       $this->entityManager->persist($relation1);
-       $this->entityManager->persist($relation2);
-       $this->entityManager->persist($relation3);
-       $this->entityManager->persist($relation4);
-       
-       $this->entityManager->flush();
-       
+		$enfantRelation = $this->entityManager->getRepository(TypeRelation::class)->findOneBy(["nom_relation"=>"enfant"]);
 
+		if (!empty($pere))
+		{
+			$pereRelation = $this->entityManager->getRepository(TypeRelation::class)->findOneBy(["nom_relation"=>"père"]);
+			$relation1 = (new Relation())->setPersonne1($pere)->setRelationType($pereRelation)->setPersonne2($enfant);
+			$relation2 = (new Relation())->setPersonne2($pere)->setRelationType($enfantRelation)->setPersonne1($enfant);
+
+			$this->entityManager->persist($pere);
+			$this->entityManager->persist($relation1);
+			$this->entityManager->persist($relation2);
+		}
+
+		if (!empty($mere))
+		{
+			$mereRelation = $this->entityManager->getRepository(TypeRelation::class)->findOneBy(["nom_relation"=>"mère"]);
+			$relation3 = (new Relation())->setPersonne1($mere)->setRelationType($mereRelation)->setPersonne2($enfant);
+			$relation4 = (new Relation())->setPersonne2($mere)->setRelationType($enfantRelation)->setPersonne1($enfant);
+
+			$this->entityManager->persist($mere);
+			$this->entityManager->persist($relation3);
+			$this->entityManager->persist($relation4);
+		}
+
+		$this->entityManager->flush();
     }
 
 
     // public function getAncestors(Connection $connection, int $personId): array
     // {
     //     $queryBuilder = $connection->createQueryBuilder();
-        
+
     //     $queryBuilder->select('p.id', 'p.nom', 'p.prenom', 'p.date_naissance', 'p.date_deces', 'p.sexe')
     //                 ->from('Personne', 'p')
     //                 ->join('p', 'Relations', 'r', 'p.id = r.personne1_id OR p.id = r.personne2_id')
@@ -176,11 +187,11 @@ class PersonneRepository extends ServiceEntityRepository
     //                 ->setParameter('pere', 'père')
     //                 ->setParameter('mere', 'mère')
     //                 ->setParameter('personId', $personId);
-        
+
     //     $results = $queryBuilder->execute()->fetchAllAssociative();
-        
+
     //     $ancestors = array();
-        
+
     //     foreach ($results as $result) {
     //         $person = array(
     //             'id' => $result['id'],
@@ -192,7 +203,7 @@ class PersonneRepository extends ServiceEntityRepository
     //         );
     //         array_push($ancestors, $person);
     //     }
-        
+
     //     return $ancestors;
     // }
 

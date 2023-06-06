@@ -28,7 +28,7 @@ class CreateTreeType extends AbstractType
                 'compound' => true,
             ])
             ->add('sexe', ChoiceType::class, [
-                'label' => 'Sexe',
+                'label' => 'Sexe *',
                 'required' => true,
                 'choices' => [
                     'M' => 'M',
@@ -37,7 +37,7 @@ class CreateTreeType extends AbstractType
                 'expanded' => true,
             ])
             ->add('nom', TextType::class, [
-                'label' => 'Nom',
+                'label' => 'Nom *',
                 'required' => true,
                 'constraints' => new Length([
                     'min' => 2,
@@ -47,7 +47,7 @@ class CreateTreeType extends AbstractType
                 'data' => $options['data']->getNom(),
             ])
             ->add('prenom', TextType::class, [
-                'label' => 'Prénom',
+                'label' => 'Prénom *',
                 'required' => true,
                 'constraints' => new Length([
                     'min' => 2,
@@ -90,7 +90,7 @@ class CreateTreeType extends AbstractType
                     'compound' => true,
                 ])
                 ->add('nom', TextType::class, [
-                    'label' => 'Nom',
+                    'label' => 'Nom *',
                     'required' => true,
                     'constraints' => new Length([
                         'min' => 2,
@@ -100,7 +100,7 @@ class CreateTreeType extends AbstractType
                     'attr' => ['placeholder' => 'Nom de naissance']
                 ])
                 ->add('prenom', TextType::class, [
-                    'label' => 'Prénom',
+                    'label' => 'Prénom *',
                     'required' => true,
                     'constraints' => new Length([
                         'min' => 2,
@@ -143,7 +143,7 @@ class CreateTreeType extends AbstractType
                     'compound' => true,
                 ])
                 ->add('nom', TextType::class, [
-                    'label' => 'Nom',
+                    'label' => 'Nom *',
                     'required' => true,
                     'constraints' => new Length([
                         'min' => 2,
@@ -152,7 +152,7 @@ class CreateTreeType extends AbstractType
                     'attr' => ['placeholder' => 'Nom de naissance']
                 ])
                 ->add('prenom', TextType::class, [
-                    'label' => 'Prénom',
+                    'label' => 'Prénom *',
                     'required' => true,
                     'constraints' => new Length([
                         'min' => 2,
@@ -195,7 +195,7 @@ class CreateTreeType extends AbstractType
                     'compound' => true,
                 ])
                 ->add('nom', TextType::class, [
-                    'label' => 'Nom',
+                    'label' => 'Nom *',
                     //'mapped' => false,
                     'required' => true,
                     'constraints' => new Length([
@@ -205,7 +205,7 @@ class CreateTreeType extends AbstractType
                     'attr' => ['placeholder' => 'Nom de naissance']
                 ])
                 ->add('prenom', TextType::class, [
-                    'label' => 'Prénom',
+                    'label' => 'Prénom *',
                     //'mapped' => false,
                     'required' => true,
                     'constraints' => new Length([

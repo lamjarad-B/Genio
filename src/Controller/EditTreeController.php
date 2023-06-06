@@ -38,7 +38,6 @@ class EditTreeController extends AbstractController
             $cnx = "Déconnexion";
         }
 
-
         $query = $queryBuilder
             ->select('p.id')
             ->from('App\Entity\Personne', 'p')
@@ -58,7 +57,7 @@ class EditTreeController extends AbstractController
              'originId' => $personId,
              'cnx' => $cnx,
              'user' => $user,
-             'userName' => $userName,  
+             'userName' => $userName,
         ]);
     }
 
@@ -70,30 +69,42 @@ class EditTreeController extends AbstractController
         $personId = intval($personId);
 
         $nom = $request->request->get('pere_nom');
+		if (empty($nom) || $nom === "undefined") $nom = null;
+
+		$nomMere = $request->request->get('mere_nom');
+		if (empty($nomMere) || $nomMere === "undefined") $nomMere = null;
+
         $prenom = $request->request->get('pere_prenom');
+		if (empty($prenom) || $prenom === "undefined") $prenom = null;
+
+		$prenomMere = $request->request->get('mere_prenom');
+		if (empty($prenomMere) || $prenomMere === "undefined") $prenomMere = null;
 
         $date_naissance = $request->request->get('pere_date_naissance');
-        $date_naissance = new DateTime($date_naissance);
-        //$date_naissance = $date_naissance->format('Y/m/d');
-
-        $date_deces = $request->request->get('pere_date_deces');
-        $date_deces = new DateTime($date_deces);
-
-        $lieu_naissance = $request->request->get('pere_lieu_naissance');
-
-        $nomMere = $request->request->get('mere_nom');
-        $prenomMere = $request->request->get('mere_prenom');
+		if (empty($date_naissance) || $date_naissance === "undefined") $date_naissance = null;
+		else $date_naissance = new DateTime($date_naissance);
 
         $date_naissance_mere = $request->request->get('mere_date_naissance');
-        $date_naissance_mere = new DateTime($date_naissance_mere);
+		if (empty($date_naissance_mere) || $date_naissance_mere === "undefined") $date_naissance_mere = null;
+		else $date_naissance_mere = new DateTime($date_naissance_mere);
+
+        $date_deces = $request->request->get('pere_date_deces');
+		if (empty($date_deces) || $date_deces === "undefined") $date_deces = null;
+		else $date_deces = new DateTime($date_deces);
 
         $date_deces_mere = $request->request->get('mere_date_deces');
-        $date_deces_mere = new DateTime($date_deces_mere);
+		if (empty($date_deces_mere) || $date_deces_mere === "undefined") $date_deces_mere = null;
+		else $date_deces_mere = new DateTime($date_deces_mere);
+
+		$lieu_naissance = $request->request->get('pere_lieu_naissance');
+		if (empty($lieu_naissance) || $lieu_naissance === "undefined") $lieu_naissance = null;
 
         $lieu_naissance_mere = $request->request->get('mere_lieu_naissance');
+		if (empty($lieu_naissance_mere) || $lieu_naissance_mere === "undefined") $lieu_naissance_mere = null;
+
+		dump($date_naissance);
 
         $this->entityManager->getRepository(Personne::class)->addAncetors(
-
             $personId,
             $nom,
             $prenom,
@@ -105,18 +116,27 @@ class EditTreeController extends AbstractController
             $date_naissance_mere,
             $date_deces_mere,
             $lieu_naissance_mere,
-
         );
 
-		$newPereId = $this->entityManager->getRepository(Personne::class)->findBy(['nom' => $nom, 'prenom' => $prenom])[0]->getId();
-		$newMereId = $this->entityManager->getRepository(Personne::class)->findBy(['nom' => $nomMere, 'prenom' => $prenomMere])[0]->getId();
+		$newPereId = null;
+		$newMereId = null;
+
+		if (!empty($nom) && !empty($prenom))
+		{
+			$newPereId = $this->entityManager->getRepository(Personne::class)->findBy(['nom' => $nom, 'prenom' => $prenom])[0]->getId();
+		}
+
+		if (!empty($nomMere) && !empty($prenomMere))
+		{
+			$newMereId = $this->entityManager->getRepository(Personne::class)->findBy(['nom' => $nomMere, 'prenom' => $prenomMere])[0]->getId();
+		}
 
         return new JsonResponse(["idPere" => $newPereId, "idMere" => $newMereId, "nomPere" => $nom ]);
     }
+
     #[Route('/editAncetors', name: 'app_edit_ancetors')]
     public function editAncetors(Request $request): Response
     {
-        
         $conn = $this->entityManager->getConnection();
 
         $personId = $request->request->get("personId");
@@ -127,11 +147,11 @@ class EditTreeController extends AbstractController
 
         $date_naissance = $request->request->get('date_naissance');
         $date_naissance = new DateTime($date_naissance);
-        $date_naissance = $date_naissance->format('Y/m/d'); 
+        $date_naissance = $date_naissance->format('Y/m/d');
 
         $date_deces = $request->request->get('date_deces');
         $date_deces = new DateTime($date_deces);
-        $date_deces = $date_deces->format('Y/m/d'); 
+        $date_deces = $date_deces->format('Y/m/d');
 
         $lieu_naissance = $request->request->get('lieu_naissance');
 
@@ -149,6 +169,7 @@ class EditTreeController extends AbstractController
         ];
 
         $conn->executeQuery($query, $params);
+
         return new Response();
     }
 
