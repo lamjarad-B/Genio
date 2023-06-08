@@ -15,3 +15,7 @@ form.addPartner {
   top: 15%;
   right: 15%;
 }
+
+.deleteAncetors {
+  display: inline-block;
+}

@@ -6,6 +6,7 @@ use App\Entity\Personne;
 use App\Repository\ArbreRepository;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -23,6 +24,7 @@ class ArbreController extends AbstractController
     #[Route('/arbre', name: 'app_arbre')]
     public function index(Connection $connection, Request $request, ArbreRepository $arbreRepository, EntityManagerInterface $entityManager): Response
     {   
+
         $user = $this->getUser();
         if($user){
             $cnx = "Déconnexion";
@@ -32,19 +34,28 @@ class ArbreController extends AbstractController
 
             $userId = $user->getId();
 
-            $query = $queryBuilder
+            try 
+            {
+                $query = $queryBuilder
                 ->select('p.id')
                 ->from('App\Entity\Personne', 'p')
                 ->where('p.user = :userId')
                 ->setParameter('userId', $userId)
                 ->getQuery();
 
-            $personId = $query->getSingleScalarResult();
-            //dd( $personId);
-            $personne = $personneRepository->find($personId);
-            //dd( $personne);
-
-            $ancestors = $arbreRepository->getAncestors($personId);
+                $personId = $query->getSingleScalarResult();
+                //dd( $personId);
+                $personne = $personneRepository->find($personId);
+                //dd( $personne);
+    
+                $ancestors = $arbreRepository->getAncestors($personId);
+                
+            }
+            catch(\Doctrine\ORM\NoResultException)
+            {
+                return $this->redirectToRoute("app_create_tree");
+            }
+            
         }
        else{
         $cnx = "Connexion";
@@ -54,14 +65,17 @@ class ArbreController extends AbstractController
         
         $ancestors = $arbreRepository->getAncestors($personId);
        // dd($ancestors);
+        $this->redirectToRoute("app_create_tree");
        }
         
         return $this->render('arbre/index.html.twig', [
-            'personne' => $personne,
-            'ancestors' => $ancestors,
-            'originId' => $personId,
+            'personne' => @$personne,
+            'ancestors' => @$ancestors,
+            'originId' => @$personId,
             'user' => $user,
             'cnx' => $cnx
         ]);
+ 
     }
+    
 }
