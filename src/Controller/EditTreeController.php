@@ -25,6 +25,7 @@ class EditTreeController extends AbstractController
     public function index(Request $request, ArbreRepository $arbreRepository, EntityManagerInterface $entityManager): Response
     {
         $queryBuilder = $entityManager->createQueryBuilder();
+        $conn = $entityManager->getConnection();
 
         $personneRepository = $this->entityManager->getRepository(Personne::class);
 
@@ -52,6 +53,26 @@ class EditTreeController extends AbstractController
         //dd($personne);
         $ancestors = $arbreRepository->getAncestors($personId);
 
+        
+        // Chercher conjoint(e)
+        $query = "SELECT *
+            FROM Relation R
+            INNER JOIN Personne P1 ON R.personne1_id = P1.id
+            INNER JOIN Personne P2 ON R.personne2_id = P2.id
+            INNER JOIN type_relation TR ON R.relation_type_id = TR.id
+            WHERE P1.id = :personId
+            AND TR.id = :relation_type_id
+        ";
+        $params = [
+            'personId' => $personId,
+            'relation_type_id' => 4,
+        ];
+
+        $results = $conn->executeQuery($query, $params);
+       // dd($results);
+
+        $conjoint = $results->fetch();
+
         return $this->render('edit_tree/index.html.twig', [
              'personne' => $personne,
              'ancestors' => $ancestors,
@@ -59,6 +80,7 @@ class EditTreeController extends AbstractController
              'cnx' => $cnx,
              'user' => $user,
              'userName' => $userName,
+             'conjoint' => @$conjoint,
         ]);
     }
 
@@ -201,39 +223,40 @@ class EditTreeController extends AbstractController
     #[Route('/addPartner', name: 'app_add_partner')]
     public function addPartner(Request $request, ArbreRepository $arbreRepository, EntityManagerInterface $entityManager): Response
     {
-        $conn = $this->entityManager->getConnection();
+        $conn = $entityManager->getConnection();
         $queryBuilder = $entityManager->createQueryBuilder();
 
-        $personneRepository = $this->entityManager->getRepository(Personne::class);
+        $personneRepository = $entityManager->getRepository(Personne::class);
 
         // $personId = $request->request->get("personId");
         // //dd($personId);
         // $personId = intval($personId);
 
-        // On selectionne la personne propriétaire de l'arbre
+        // On sélectionne la personne propriétaire de l'arbre
         $user = $this->getUser();
         $userId = $user->getId();
         $userName = $user->getNom();
-        
+        //dd($userName);
+            
         if (!$user) {
             $cnx = "Connexion";
-        }
-        else{
+        } else {
             $cnx = "Déconnexion";
         }
+
         $query = $queryBuilder
-        ->select('p.id')
-        ->from('App\Entity\Personne', 'p')
-        ->where('p.user = :userId')
-        ->setParameter('userId', $userId)
-        ->getQuery();
+            ->select('p.id')
+            ->from('App\Entity\Personne', 'p')
+            ->where('p.user = :userId')
+            ->setParameter('userId', $userId)
+            ->getQuery();
 
         $personId = $query->getSingleScalarResult();
 
         //dd($personId);
 
         $query = "SELECT sexe FROM personne
-        WHERE id = :personId
+            WHERE id = :personId
         ";
         $params = [
             'personId' => $personId,
@@ -241,78 +264,52 @@ class EditTreeController extends AbstractController
 
         $results = $conn->executeQuery($query, $params);
 
-        $personSexe = $results->fetchAllAssociative();
+        $personSexe = $results->fetchOne();
+        // dd($personSexe);
 
-        if($personSexe === "M"){
+        if ($personSexe === "M") {
             $sexe_conjoint = "F";
-        }
-        else{
+        } else {
             $sexe_conjoint = "M";
         }
 
         $nom_conjoint = $request->request->get('nom_conjoint');
-		//if (empty($nom) || $nom === "undefined") $nom = null;
+        //if (empty($nom) || $nom === "undefined") $nom = null;
 
         $prenom_conjoint = $request->request->get('prenom_conjoint');
-		//if (empty($prenom) || $prenom === "undefined") $prenom = null;
+        //if (empty($prenom) || $prenom === "undefined") $prenom = null;
+       // dd($prenom_conjoint);
 
         $date_naissance_conjoint = $request->request->get('date_naissance_conjoint');
-		if (empty($date_naissance_conjoint) || $date_naissance_conjoint === "undefined") $date_naissance_conjoint = null;
-		else $date_naissance_conjoint = new DateTime($date_naissance_conjoint);
+        if (empty($date_naissance_conjoint) || $date_naissance_conjoint === "undefined") {
+            $date_naissance_conjoint = null;
+        } else {
+            $date_naissance_conjoint = new DateTime($date_naissance_conjoint);
+        }
 
         $date_deces_conjoint = $request->request->get('date_deces_conjoint');
-		if (empty($date_deces_conjoint) || $date_deces_conjoint === "undefined") $date_deces_conjoint = null;
-		else $date_deces_conjoint = new DateTime($date_deces_conjoint);
+        if (empty($date_deces_conjoint) || $date_deces_conjoint === "undefined") {
+            $date_deces_conjoint = null;
+        } else {
+            $date_deces_conjoint = new DateTime($date_deces_conjoint);
+        }
 
-		$lieu_naissance_conjoint = $request->request->get('lieu_naissance_conjoint');
-		if (empty($lieu_naissance_conjoint) || $lieu_naissance_conjoint === "undefined") $lieu_naissance_conjoint = null;
+        $lieu_naissance_conjoint = $request->request->get('lieu_naissance_conjoint');
+        if (empty($lieu_naissance_conjoint) || $lieu_naissance_conjoint === "undefined") {
+            $lieu_naissance_conjoint = null;
+        }
 
-        $this->entityManager->getRepository(Personne::class)->addPartner(
+        $entityManager->getRepository(Personne::class)->addPartner(
             $personId,
             $nom_conjoint,
             $prenom_conjoint,
             $sexe_conjoint,
             $date_naissance_conjoint,
             $date_deces_conjoint,
-            $lieu_naissance_conjoint,
+            $lieu_naissance_conjoint
         );
 
-        $personne = $personneRepository->find($personId);
-        //dd($personne);
-        $ancestors = $arbreRepository->getAncestors($personId);
-
-        $query = "SELECT P2.nom, P2.prenom
-                FROM Relation R
-                INNER JOIN Personne P1 ON R.personne1_id = P1.id
-                INNER JOIN Personne P2 ON R.personne2_id = P2.id
-                INNER JOIN type_relation TR ON R.relation_type_id = TR.id
-                WHERE P1.id = :personId
-                AND TR.id = :relation_type_id
-                ";
-        $params = [
-            'personId' => $personId,
-            'relation_type_id' => 4,
-        ];
-
-        $results = $conn->executeQuery($query, $params);
-
-        $conjoint = $results->fetchAllAssociative();
-        dd($conjoint);
-
-        return $this->render('edit_tree/index.html.twig', [
-            'nom_conjoint' => $nom_conjoint,
-            'prenom_conjoint' => $prenom_conjoint,
-            'sexe_conjoint' => $sexe_conjoint,
-            'date_naissance_conjoint' => $date_naissance_conjoint,
-            'date_deces_conjoint' => $date_deces_conjoint,
-            'lieu_naissance_conjoint' => $lieu_naissance_conjoint,
-            'personne' => $personne,
-            'ancestors' => $ancestors,
-            'originId' => $personId,
-            'cnx' => $cnx,
-            'user' => $user,
-            'userName' => $userName,
-            'conjoint' => $conjoint
-       ]);
+        return $this->redirectToRoute("app_edit_tree");
     }
+
 }

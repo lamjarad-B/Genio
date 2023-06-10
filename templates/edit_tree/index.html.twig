@@ -9,13 +9,20 @@
     {% endif %}
 
 	<h2>Conjoint(e)</h2>
-	{# {% if conjoint is not null %}
-		<p><strong>{{ conjoint.nom }} {{ conjoint.prenom }}</strong></p>
+
+	{% if conjoint != false %}
+		<p><strong>{{ conjoint.nom }} {{ conjoint.prenom }}, </strong> Date de naissance: {{ conjoint.date_naissance|date('d/m/Y') }} 
+		{% if personne.dateDeces is not null %}
+        <p>Date de décès : {{ conjoint.dateDeces|date('d/m/Y') }}</p>
+    {% endif %}
+
+		
+		</p>
 	{% endif %}
 
 	{% if conjoint is null %}
 		<p>Pas de conjoint(e) trouvé(e)</p>
-	{% endif %} #}
+	{% endif %}
 
     <h2>Ancêtres</h2>
 

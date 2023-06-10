@@ -7,7 +7,14 @@
     {% if personne.dateDeces is not null %}
         <p>Date de décès : {{ personne.dateDeces|date('d/m/Y') }}</p>
     {% endif %}
+	<h2>Conjoint(e)</h2>
 
+	{% if conjoint != false %}
+		<p><strong>{{ conjoint.nom }} {{ conjoint.prenom }}, </strong> Date de naissance: {{ conjoint.date_naissance|date('d/m/Y') }} 
+		{% if personne.dateDeces is not null %}
+        	<p>Date de décès : {{ conjoint.dateDeces|date('d/m/Y') }}</p>
+		{% endif %}
+    {% endif %}
     <h2>Ancêtres</h2>
 
 	<ul>

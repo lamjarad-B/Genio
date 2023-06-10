@@ -24,7 +24,8 @@ class ArbreController extends AbstractController
     #[Route('/arbre', name: 'app_arbre')]
     public function index(Connection $connection, Request $request, ArbreRepository $arbreRepository, EntityManagerInterface $entityManager): Response
     {   
-
+        $queryBuilder = $entityManager->createQueryBuilder();
+        $conn = $entityManager->getConnection();
         $user = $this->getUser();
         if($user){
             $cnx = "Déconnexion";
@@ -67,13 +68,35 @@ class ArbreController extends AbstractController
        // dd($ancestors);
         $this->redirectToRoute("app_create_tree");
        }
-        
+       
+
+
+       // Chercher conjoint(e)
+       $query = "SELECT *
+            FROM Relation R
+            INNER JOIN Personne P1 ON R.personne1_id = P1.id
+            INNER JOIN Personne P2 ON R.personne2_id = P2.id
+            INNER JOIN type_relation TR ON R.relation_type_id = TR.id
+            WHERE P1.id = :personId
+            AND TR.id = :relation_type_id
+        ";
+        $params = [
+            'personId' => $personId,
+            'relation_type_id' => 4,
+        ];
+
+        $results = $conn->executeQuery($query, $params);
+        // dd($results);
+
+        $conjoint = $results->fetch();
+
         return $this->render('arbre/index.html.twig', [
             'personne' => @$personne,
             'ancestors' => @$ancestors,
             'originId' => @$personId,
             'user' => $user,
-            'cnx' => $cnx
+            'cnx' => $cnx,
+            'conjoint' => $conjoint
         ]);
  
     }
