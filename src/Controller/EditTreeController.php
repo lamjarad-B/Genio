@@ -48,9 +48,9 @@ class EditTreeController extends AbstractController
             ->getQuery();
 
         $personId = $query->getSingleScalarResult();
-        //dd( $personId);
+
         $personne = $personneRepository->find($personId);
-        //dd($personne);
+
         $ancestors = $arbreRepository->getAncestors($personId);
 
         
@@ -69,9 +69,101 @@ class EditTreeController extends AbstractController
         ];
 
         $results = $conn->executeQuery($query, $params);
-       // dd($results);
 
         $conjoint = $results->fetch();
+
+        
+        // Afiicher les frères et soeurs
+
+        // 1 On récupère le père du personId et on le stock dans personne1_id
+        $pere = "
+            SELECT R.personne1_id AS pere_id
+            FROM Relation R
+            INNER JOIN type_relation TR ON R.relation_type_id = TR.id
+            WHERE R.personne2_id = :personId
+            AND TR.nom_relation = 'père' GROUP BY pere_id
+        ";
+
+        $params = [
+            'personId' => $personId,
+        ];
+
+        $results = $conn->executeQuery($pere, $params);
+        $personne1_id = $results->fetchAssociative();
+        $personne1_id = $personne1_id['pere_id'];
+
+        // 2 On récupère le mère du personId et on le stock dans personne2_id
+        $mere = "
+            SELECT R.personne1_id AS mere_id
+            FROM Relation R
+            INNER JOIN type_relation TR ON R.relation_type_id = TR.id
+            WHERE R.personne2_id = :personId
+            AND TR.nom_relation = 'mere' GROUP BY mere_id
+        ";
+
+        $params = [
+            'personId' => $personId,
+        ];
+
+        $results = $conn->executeQuery($mere, $params);
+        $personne2_id = $results->fetchAssociative();
+        $personne2_id = $personne2_id['mere_id'];
+
+        // 3 On récupère les frères et soeurs
+        $sql = "SELECT * 
+            FROM DISTINCT Personne p
+            INNER JOIN Relation r ON (p.id = r.personne1_id OR p.id = r.personne2_id)
+            WHERE r.relation_type_id IN (
+                SELECT tr.id
+                FROM type_relation tr
+                WHERE tr.nom_relation IN (:pere, :mere)
+            )
+            AND (r.personne1_id = :personne1_id OR r.personne2_id = :personne2_id)
+            AND p.id != :personId
+            AND p.id != :personne1_id
+            AND p.id != :personne2_id
+        ";
+             $params = [
+                'personId' => $personId,
+                'pere'=> 'père',
+                'mere'=> 'mère',
+                'personne1_id'=> $personne1_id,
+                'personne2_id'=> $personne2_id
+            ];
+
+            $results = $conn->executeQuery($sql, $params);
+
+            $siblings = $results->fetchAssociative();
+            if($siblings){
+                $siblings = (object)$siblings;
+            }
+
+            // AFFicher les enfants
+
+            $query = "
+                SELECT P.*
+                FROM Personne P
+                INNER JOIN Relation R ON P.id = R.personne2_id
+                INNER JOIN type_relation TR ON R.relation_type_id = TR.id
+                WHERE R.personne1_id = :personId
+                AND TR.nom_relation = :relation
+                
+            ";
+
+            if($personne->getSexe() ==='M'){
+                $relation = 'père';
+            }
+            else{
+                $relation = 'mère';
+            }
+
+            $params = [
+                'personId' => $personId,
+                'relation' => $relation
+            ];
+
+            $results = $conn->executeQuery($query, $params);
+            $children = $results->fetchAllAssociative();
 
         return $this->render('edit_tree/index.html.twig', [
              'personne' => $personne,
@@ -81,6 +173,8 @@ class EditTreeController extends AbstractController
              'user' => $user,
              'userName' => $userName,
              'conjoint' => @$conjoint,
+             'siblings' => $siblings,
+             'children' => $children
         ]);
     }
 

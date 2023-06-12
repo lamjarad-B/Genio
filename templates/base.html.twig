@@ -42,9 +42,13 @@
             </div>
             
             <ul class="nav-list">
-                    <li><a href="href="{{ path('app_home')}}"" class="links">Accueil</a></li>
+                    <li><a href="{{ path('app_home')}}" class="links">Accueil</a></li>
                     <li><a href="#" class="links">Recherche</a></li>
-                    <li><a href="#" class="links">Arbre</a></li>
+                    {% if user %}
+                        <li><a href="{{ path('app_arbre')}}" class="links">Arbre</a></li>
+                    {% else %}
+                        <li><a href="{{ path('app_login')}}" class="links">Arbre</a></li>
+                    {% endif %}
                     <li><a href="#" class="links">Mon compte</a></li>
                     {% if user is null %}
                     <li><button class="links">
