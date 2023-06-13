@@ -200,39 +200,65 @@ class PersonneRepository extends ServiceEntityRepository
 
     }
 
-    // public function getAncestors(Connection $connection, int $personId): array
-    // {
-    //     $queryBuilder = $connection->createQueryBuilder();
+    //  Vérifier si la personne existe déjà dans la bdd ou pas
+    public function checkPerson(
+        string $nom,
+        string $prenom,
+        ?DateTime $date_naissance,
+        ?DateTime $date_deces,
+        ?string $lieu_naissance,
+        string $nomMere,
+        string $prenomMere,
+        ?DateTime $date_naissance_mere,
+        ?DateTime $date_deces_mere,
+        ?string $lieu_naissance_mere
+    )
+    {
+        //$entityManager = $this->getDoctrine()->getManager();
+        $personneRepository = $this->entityManager->getRepository(Personne::class);
 
-    //     $queryBuilder->select('p.id', 'p.nom', 'p.prenom', 'p.date_naissance', 'p.date_deces', 'p.sexe')
-    //                 ->from('Personne', 'p')
-    //                 ->join('p', 'Relations', 'r', 'p.id = r.personne1_id OR p.id = r.personne2_id')
-    //                 ->join('r', 'TypeRelation', 't', 'r.relation_type_id = t.id')
-    //                 ->where('t.nom_relation IN (:pere, :mere)')
-    //                 ->andWhere('p.id <> :personId')
-    //                 ->setParameter('pere', 'père')
-    //                 ->setParameter('mere', 'mère')
-    //                 ->setParameter('personId', $personId);
+        $queryBuilder = $personneRepository->createQueryBuilder('p');
+        $queryBuilder->where('p.nom = :nom')
+            ->andWhere('p.prenom = :prenom')
+            ->setParameter('nom', $nom)
+            ->setParameter('prenom', $prenom);
 
-    //     $results = $queryBuilder->execute()->fetchAllAssociative();
+        if ($date_naissance !== null) {
+            $queryBuilder->andWhere('p.dateNaissance = :dateNaissance')
+                ->setParameter('dateNaissance', $date_naissance);
+        }
 
-    //     $ancestors = array();
+        if ($date_deces !== null) {
+            $queryBuilder->andWhere('p.dateDeces = :dateDeces')
+                ->setParameter('dateDeces', $date_deces);
+        }
+        
+        if ($lieu_naissance !== null) {
+            $queryBuilder->andWhere('p.lieu_naissance = :lieu_naissance')
+                ->setParameter('lieu_naissance', $lieu_naissance);
+        }
+        $queryBuilder->orWhere('p.nom = :nomMere')
+        ->orWhere('p.prenom = :prenomMere')
+        ->setParameter('nomMere', $nomMere)
+        ->setParameter('prenomMere', $prenomMere);
 
-    //     foreach ($results as $result) {
-    //         $person = array(
-    //             'id' => $result['id'],
-    //             'nom' => $result['nom'],
-    //             'prenom' => $result['prenom'],
-    //             'date_naissance' => $result['date_naissance'],
-    //             'date_deces' => $result['date_deces'],
-    //             'sexe' => $result['sexe']
-    //         );
-    //         array_push($ancestors, $person);
-    //     }
+        if ($date_naissance_mere !== null) {
+            $queryBuilder->andWhere('p.dateNaissance = :date_naissance_mere')
+                ->setParameter('date_naissance_mere', $date_naissance_mere);
+        }
 
-    //     return $ancestors;
-    // }
+        if ($date_deces_mere !== null) {
+            $queryBuilder->andWhere('p.dateDeces = :date_deces_mere')
+                ->setParameter('date_deces_mere', $date_deces_mere);
+        }
+        
+        if ($lieu_naissance_mere !== null) {
+            $queryBuilder->andWhere('p.lieu_naissance = :lieu_naissance_mere')
+                ->setParameter('lieu_naissance_mere', $lieu_naissance_mere);
+        }
 
+        $existingPerson = $queryBuilder->getQuery()->getResult();
 
+    }
 
 }

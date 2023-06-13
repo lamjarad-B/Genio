@@ -84,7 +84,9 @@ class CreateTreeController extends AbstractController
             $prenomMere = $personne3['prenom'];
             $date_naissance_mere = $personne3['date_naissance'];
             $date_deces_mere = $personne3['date_deces'];
-            $lieu_naissance_mere = $personne3['lieu_naissance'];      
+            $lieu_naissance_mere = $personne3['lieu_naissance'];
+
+            
             
             $this->entityManager->getRepository(Personne::class)->createTree(
                 $nomProprietaire,
