@@ -59,37 +59,37 @@ class HomeController extends AbstractController
             ]);
             
         }
-        $nom = "Doe";
-        $prenom = "John";
-        $date_naissance = new DateTime("1990-01-01");
-        $date_deces = null;
-        $lieu_naissance = "Paris";
-        $nomMere = "Smith";
-        $prenomMere = "Jane";
-        $date_naissance_mere = new DateTime("1965-05-10");
-        $date_deces_mere = null;
-        $lieu_naissance_mere = "New York";
+        // $nom = "Doe";
+        // $prenom = "John";
+        // $date_naissance = new DateTime("1990-01-01");
+        // $date_deces = null;
+        // $lieu_naissance = "Paris";
+        // $nomMere = "Smith";
+        // $prenomMere = "Jane";
+        // $date_naissance_mere = new DateTime("1965-05-10");
+        // $date_deces_mere = null;
+        // $lieu_naissance_mere = "New York";
 
-        // Appeler la fonction checkPerson avec les fausses valeurs
-        $existingPerson = $this->entityManager->getRepository(Personne::class)->checkPerson(
-            $nom,
-            $prenom,
-            $date_naissance,
-            $date_deces,
-            $lieu_naissance,
-            $nomMere,
-            $prenomMere,
-            $date_naissance_mere,
-            $date_deces_mere,
-            $lieu_naissance_mere
-        );
+        // // Appeler la fonction checkPerson avec les fausses valeurs
+        // $existingPerson = $this->entityManager->getRepository(Personne::class)->checkPerson(
+        //     $nom,
+        //     $prenom,
+        //     $date_naissance,
+        //     $date_deces,
+        //     $lieu_naissance,
+        //     $nomMere,
+        //     $prenomMere,
+        //     $date_naissance_mere,
+        //     $date_deces_mere,
+        //     $lieu_naissance_mere
+        // );
 
-        // Vérifier le résultat
-        if ($existingPerson) {
-            echo "La personne existe déjà.";
-        } else {
-            echo "La personne n'existe pas.";
-        }
+        // // Vérifier le résultat
+        // if ($existingPerson) {
+        //     echo "La personne existe déjà.";
+        // } else {
+        //     echo "La personne n'existe pas.";
+        // }
 
         return $this->render('home/index.html.twig',
         [

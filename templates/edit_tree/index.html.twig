@@ -11,10 +11,10 @@
 	<h2>Conjoint(e)</h2>
 
 	{% if conjoint != false %}
-		<p><strong>{{ conjoint.nom }} {{ conjoint.prenom }}, </strong> Date de naissance: {{ conjoint.date_naissance|date('d/m/Y') }} 
+		<p><strong>{{ conjoint.nom }} {{ conjoint.prenom }}, </strong> Date de naissance: {{ conjoint.date_naissance|date('d/m/Y') }}
 		{% if personne.dateDeces is not null %}
 			<p>Date de décès : {{ conjoint.dateDeces|date('d/m/Y') }}</p>
-		{% endif %}		
+		{% endif %}
 		</p>
 	{% endif %}
 
@@ -86,38 +86,91 @@
 					{% set motherData = ancestors|filter(v => v.id == motherId.personne1_id)|first %}
 				{% endif %}
 
+				{% if fatherData is null or motherData is null %}
+					<button id="addButton">Ajouter</button>
+				{% endif %}
+
+				{% if fatherData is not null %}
+					{# Ajouter une mère manquant à une personne #}
+					<form class="addAncetors" data-id="{{ personId }}">
+						<div>
+							<h2>Mère</h2>
+
+							<label for="mere_nom">Nom:</label>
+							<input type="text" id="mere_nom" name="mere_nom" ><br>
+
+							<label for="mere_prenom">Prénom:</label>
+							<input type="text" id="mere_prenom" name="mere_prenom" ><br>
+
+							<label for="mere_date_naissance">Date de naissance:</label>
+							<input type="date" id="mere_date_naissance" name="mere_date_naissance"><br>
+
+							<label for="mere_date_deces">Date de décès:</label>
+							<input type="date" id="mere_date_deces" name="mere_date_deces"><br>
+
+							<label for="mere_lieu_naissance">Lieu de naissance:</label>
+							<input type="text" id="mere_lieu_naissance" name="mere_lieu_naissance"><br>
+						</div>
+
+						<input type="submit" name="addAncetors" value="Envoyer">
+					</form>
+				{% else %}
+					{# Ajouter un père manquant à une personne #}
+					<form class="addAncetors" data-id="{{ personId }}">
+						<div>
+							<h2>Père</h2>
+
+							<label for="pere_nom">Nom:</label>
+							<input type="text" id="pere_nom" name="pere_nom" value="{{person.nom}}" ><br>
+
+							<label for="pere_prenom">Prénom:</label>
+							<input type="text" id="pere_prenom" name="pere_prenom" ><br>
+
+							<label for="pere_date_naissance">Date de naissance:</label>
+							<input type="date" id="pere_date_naissance" name="pere_date_naissance"><br>
+
+							<label for="pere_date_deces">Date de décès:</label>
+							<input type="date" id="pere_date_deces" name="pere_date_deces"><br>
+
+							<label for="pere_lieu_naissance">Lieu de naissance:</label>
+							<input type="text" id="pere_lieu_naissance" name="pere_lieu_naissance"><br>
+						</div>
+
+						<input type="submit" name="addAncetors" value="Envoyer">
+					</form>
+				{% endif %}
+
+				<button id="editButton">Modifier</button>
+
+				{# Supprimer une personne #}
+				<form class="deleteAncetors" data-id="{{ personId }}">
+					<input type="submit" name="deleteAncetors" value="Supprimer">
+				</form>
+
+				{# Éditer une personne #}
+				<form class="editAncetors" data-id="{{ personId }}">
+					<div>
+						<label for="nom">Nom:</label>
+						<input type="text" id="nom" name="nom" value="{{person.nom}}" ><br>
+
+						<label for="prenom">Prénom:</label>
+						<input type="text" id="prenom" name="prenom" value="{{person.prenom}}" ><br>
+
+						<label for="date_naissance">Date de naissance:</label>
+						<input type="date" id="date_naissance" name="date_naissance" value="{{person.date_naissance}}"><br>
+
+						<label for="date_deces">Date de décès:</label>
+						<input type="date" id="date_deces" name="date_deces" value="{{person.date_deces}}"><br>
+
+						<label for="lieu_naissance">Lieu de naissance:</label>
+						<input type="text" id="lieu_naissance" name="lieu_naissance" value="{{person.lieu_naissance}}"><br>
+					</div>
+
+					<input type="submit" name="editAncetors" value="Modifier">
+				</form>
+
 				<ul class="ancetors">
-					{% if fatherData is null %}
-						{% if motherData is not null %}
-							<ul class="ancetors">
-								<button id="addButton">Ajouter</button>
-
-								{# Ajouter un père manquant à une personne #}
-								<form class="addAncetors" data-id="{{ personId }}">
-									<div>
-										<h2>Père</h2>
-
-										<label for="pere_nom">Nom:</label>
-										<input type="text" id="pere_nom" name="pere_nom" value="{{person.nom}}" ><br>
-
-										<label for="pere_prenom">Prénom:</label>
-										<input type="text" id="pere_prenom" name="pere_prenom" ><br>
-
-										<label for="pere_date_naissance">Date de naissance:</label>
-										<input type="date" id="pere_date_naissance" name="pere_date_naissance"><br>
-
-										<label for="pere_date_deces">Date de décès:</label>
-										<input type="date" id="pere_date_deces" name="pere_date_deces"><br>
-
-										<label for="pere_lieu_naissance">Lieu de naissance:</label>
-										<input type="text" id="pere_lieu_naissance" name="pere_lieu_naissance"><br>
-									</div>
-
-									<input type="submit" name="addAncetors" value="Envoyer">
-								</form>
-							</ul>
-						{% endif %}
-					{% else %}
+					{% if fatherData is not null %}
 						{# Affichage des informations du père #}
 						<li data-id="{{ fatherData.id }}">
 							<strong>Père</strong>
@@ -131,37 +184,7 @@
 						{{ _self.displayParents(ancestors, fatherData.id, originId) }}
 					{% endif %}
 
-					{% if motherData is null %}
-						{% if fatherData is not null %}
-							<ul class="ancetors">
-								<button id="addButton">Ajouter</button>
-
-								{# Ajouter une mère manquant à une personne #}
-								<form class="addAncetors" data-id="{{ personId }}">
-									<div>
-										<h2>Mère</h2>
-
-										<label for="mere_nom">Nom:</label>
-										<input type="text" id="mere_nom" name="mere_nom" ><br>
-
-										<label for="mere_prenom">Prénom:</label>
-										<input type="text" id="mere_prenom" name="mere_prenom" ><br>
-
-										<label for="mere_date_naissance">Date de naissance:</label>
-										<input type="date" id="mere_date_naissance" name="mere_date_naissance"><br>
-
-										<label for="mere_date_deces">Date de décès:</label>
-										<input type="date" id="mere_date_deces" name="mere_date_deces"><br>
-
-										<label for="mere_lieu_naissance">Lieu de naissance:</label>
-										<input type="text" id="mere_lieu_naissance" name="mere_lieu_naissance"><br>
-									</div>
-
-									<input type="submit" name="addAncetors" value="Envoyer">
-								</form>
-							</ul>
-						{% endif %}
-					{% else %}
+					{% if motherData is not null %}
 						{# Affichage des informations de la mère #}
 						<li data-id="{{ motherData.id }}">
 							<strong>Mère</strong>
@@ -174,85 +197,10 @@
 						{# Appel récursif de la fonction pour afficher les parents de la mère #}
 						{{ _self.displayParents(ancestors, motherData.id, originId) }}
 					{% endif %}
-
-					{% if fatherData is null and motherData is null %}
-						<button id="addButton">Ajouter</button>
-						<button id="editButton">Modifier</button>
-
-						{# Supprimer une personne #}
-						<form class="deleteAncetors" data-id="{{ personId }}">
-							<input type="submit" name="deleteAncetors" value="Supprimer">
-						</form>
-
-						{# Ajouter des parents à une personne #}
-						<form class="addAncetors" data-id="{{ personId }}">
-							<div>
-								<h2>Père</h2>
-
-								<label for="pere_nom">Nom:</label>
-								<input type="text" id="pere_nom" name="pere_nom" value="{{person.nom}}" ><br>
-
-								<label for="pere_prenom">Prénom:</label>
-								<input type="text" id="pere_prenom" name="pere_prenom" ><br>
-
-								<label for="pere_date_naissance">Date de naissance:</label>
-								<input type="date" id="pere_date_naissance" name="pere_date_naissance"><br>
-
-								<label for="pere_date_deces">Date de décès:</label>
-								<input type="date" id="pere_date_deces" name="pere_date_deces"><br>
-
-								<label for="pere_lieu_naissance">Lieu de naissance:</label>
-								<input type="text" id="pere_lieu_naissance" name="pere_lieu_naissance"><br>
-							</div>
-
-							<div>
-								<h2>Mère</h2>
-
-								<label for="mere_nom">Nom:</label>
-								<input type="text" id="mere_nom" name="mere_nom" ><br>
-
-								<label for="mere_prenom">Prénom:</label>
-								<input type="text" id="mere_prenom" name="mere_prenom" ><br>
-
-								<label for="mere_date_naissance">Date de naissance:</label>
-								<input type="date" id="mere_date_naissance" name="mere_date_naissance"><br>
-
-								<label for="mere_date_deces">Date de décès:</label>
-								<input type="date" id="mere_date_deces" name="mere_date_deces"><br>
-
-								<label for="mere_lieu_naissance">Lieu de naissance:</label>
-								<input type="text" id="mere_lieu_naissance" name="mere_lieu_naissance"><br>
-							</div>
-
-							<input type="submit" name="addAncetors" value="Envoyer">
-						</form>
-
-						{# Éditer une personne #}
-						<form class="editAncetors" data-id="{{ personId }}">
-							<div>
-								<label for="nom">Nom:</label>
-								<input type="text" id="nom" name="nom" value="{{person.nom}}" ><br>
-
-								<label for="prenom">Prénom:</label>
-								<input type="text" id="prenom" name="prenom" value="{{person.prenom}}" ><br>
-
-								<label for="date_naissance">Date de naissance:</label>
-								<input type="date" id="date_naissance" name="date_naissance" value="{{person.date_naissance}}"><br>
-
-								<label for="date_deces">Date de décès:</label>
-								<input type="date" id="date_deces" name="date_deces" value="{{person.date_deces}}"><br>
-
-								<label for="lieu_naissance">Lieu de naissance:</label>
-								<input type="text" id="lieu_naissance" name="lieu_naissance" value="{{person.lieu_naissance}}"><br>
-							</div>
-
-							<input type="submit" name="editAncetors" value="Modifier">
-						</form>
-					{% endif %}
 				</ul>
 			{% endif %}
 
-						
+
 		{% endmacro %}
 
 		{# Appel initial de la fonction pour la personne recherchée #}

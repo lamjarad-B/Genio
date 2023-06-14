@@ -5,16 +5,16 @@ $( document ).ready( function ()
 		event.preventDefault();
 
 		const form = $( event.currentTarget );
-		const pere_nom = form.find( "input[name='pere_nom']" ).val();
-		const pere_prenom = form.find( "input[name='pere_prenom']" ).val();
-		const pere_date_naissance = form.find( "input[name='pere_date_naissance']" ).val();
-		const pere_date_deces = form.find( "input[name='pere_date_deces']" ).val();
-		const pere_lieu_naissance = form.find( "input[name='pere_lieu_naissance']" ).val();
-		const mere_nom = form.find( "input[name='mere_nom']" ).val();
-		const mere_prenom = form.find( "input[name='mere_prenom']" ).val();
-		const mere_date_naissance = form.find( "input[name='mere_date_naissance']" ).val();
-		const mere_date_deces = form.find( "input[name='mere_date_deces']" ).val();
-		const mere_lieu_naissance = form.find( "input[name='mere_lieu_naissance']" ).val();
+		let pere_nom = form.find( "input[name='pere_nom']" ).val();
+		let pere_prenom = form.find( "input[name='pere_prenom']" ).val();
+		let pere_date_naissance = form.find( "input[name='pere_date_naissance']" ).val();
+		let pere_date_deces = form.find( "input[name='pere_date_deces']" ).val();
+		let pere_lieu_naissance = form.find( "input[name='pere_lieu_naissance']" ).val();
+		let mere_nom = form.find( "input[name='mere_nom']" ).val();
+		let mere_prenom = form.find( "input[name='mere_prenom']" ).val();
+		let mere_date_naissance = form.find( "input[name='mere_date_naissance']" ).val();
+		let mere_date_deces = form.find( "input[name='mere_date_deces']" ).val();
+		let mere_lieu_naissance = form.find( "input[name='mere_lieu_naissance']" ).val();
 
 		fetch( "/addAncetors", {
 			method: "POST",
@@ -41,6 +41,53 @@ $( document ).ready( function ()
 			return response.json();
 		} ).then( function ( data )
 		{
+			if ( !data.idPere && !data.idMere )
+			{
+				const date = new Date( data.date_naissance[ "date" ] );
+				const date_naissance = date.getDate() + "/" + ( date.getMonth() + 1 ) + "/" + date.getFullYear();
+				const anwser = confirm( "Une personne avec ce nom et ce prénom existe déjà (" + data.sexe + " " + data.nom + " " + data.prenom + ", née le " + date_naissance + ").\nVoulez-vous utiliser ces informations ?" );
+
+				if ( anwser )
+				{
+					if ( data.sexe === "M" )
+					{
+						pere_nom = data.nom;
+						form.find( "input[name='pere_nom']" ).val( pere_nom );
+
+						pere_prenom = data.prenom;
+						form.find( "input[name='pere_prenom']" ).val( pere_prenom );
+
+						pere_date_naissance = data.date_naissance;
+						form.find( "input[name='pere_date_naissance']" ).val( new Date( pere_date_naissance[ "date" ] ).toISOString().split( 'T' )[ 0 ] );
+
+						pere_date_deces = data.date_deces;
+						form.find( "input[name='pere_date_deces']" ).val( new Date( pere_date_deces[ "date" ] ).toISOString().split( 'T' )[ 0 ] );
+
+						pere_lieu_naissance = data.lieu_naissance;
+						form.find( "input[name='pere_lieu_naissance']" ).val( pere_lieu_naissance );
+					}
+					else
+					{
+						mere_nom = data.nom;
+						form.find( "input[name='mere_nom']" ).val( mere_nom );
+
+						mere_prenom = data.prenom;
+						form.find( "input[name='mere_prenom']" ).val( mere_prenom );
+
+						mere_date_naissance = data.date_naissance;
+						form.find( "input[name='mere_date_naissance']" ).val( new Date( mere_date_naissance[ "date" ] ).toISOString().split( 'T' )[ 0 ] );
+
+						mere_date_deces = data.date_deces;
+						form.find( "input[name='mere_date_deces']" ).val( new Date( mere_date_deces[ "date" ] ).toISOString().split( 'T' )[ 0 ] );
+
+						mere_lieu_naissance = data.lieu_naissance;
+						form.find( "input[name='mere_lieu_naissance']" ).val( mere_lieu_naissance );
+					}
+				}
+
+				return;
+			}
+
 			const parent = form.parent();
 			const length = parent.children().length === 2;
 			const container = length ? parent.parent() : parent;

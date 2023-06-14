@@ -3,8 +3,6 @@
 namespace App\Controller;
 use App\Entity\Personne;
 use App\Repository\ArbreRepository;
-use App\Repository\PersonneRepository;
-use Doctrine\DBAL\Connection;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -53,7 +51,7 @@ class EditTreeController extends AbstractController
 
         $ancestors = $arbreRepository->getAncestors($personId);
 
-        
+
         // Chercher conjoint(e)
         $query = "SELECT *
             FROM Relation R
@@ -72,7 +70,7 @@ class EditTreeController extends AbstractController
 
         $conjoint = $results->fetch();
 
-        
+
         // Afiicher les frères et soeurs
 
         // 1 On récupère le père du personId et on le stock dans personne1_id
@@ -110,8 +108,8 @@ class EditTreeController extends AbstractController
         $personne2_id = $personne2_id['mere_id'];
 
         // 3 On récupère les frères et soeurs
-        $sql = "SELECT * 
-            FROM DISTINCT Personne p
+        $sql = "SELECT *
+            FROM Personne p
             INNER JOIN Relation r ON (p.id = r.personne1_id OR p.id = r.personne2_id)
             WHERE r.relation_type_id IN (
                 SELECT tr.id
@@ -147,7 +145,6 @@ class EditTreeController extends AbstractController
                 INNER JOIN type_relation TR ON R.relation_type_id = TR.id
                 WHERE R.personne1_id = :personId
                 AND TR.nom_relation = :relation
-                
             ";
 
             if($personne->getSexe() ==='M'){
@@ -181,9 +178,8 @@ class EditTreeController extends AbstractController
     #[Route('/addAncetors', name: 'app_add_ancetors')]
     public function addAncetors(Request $request, ArbreRepository $arbreRepository, EntityManagerInterface $entityManager): JsonResponse
     {
-
-        $personId = $request->request->get("personId");
-        $personId = intval($personId);
+        $personId = intval($request->request->get("personId"));
+		$duplicated = boolval($request->request->get("duplicated"));
 
         $nom = $request->request->get('pere_nom');
 		if (empty($nom) || $nom === "undefined") $nom = null;
@@ -219,7 +215,30 @@ class EditTreeController extends AbstractController
         $lieu_naissance_mere = $request->request->get('mere_lieu_naissance');
 		if (empty($lieu_naissance_mere) || $lieu_naissance_mere === "undefined") $lieu_naissance_mere = null;
 
-		//dump($date_naissance);
+		$existingPerson = $this->entityManager->getRepository(Personne::class)->checkPerson(
+			$nom,
+			$prenom,
+			$date_naissance,
+			$date_deces,
+			$lieu_naissance,
+			$nomMere,
+			$prenomMere,
+			$date_naissance_mere,
+			$date_deces_mere,
+			$lieu_naissance_mere
+		);
+
+		if ($existingPerson && !$duplicated) {
+
+			return new JsonResponse([
+				"sexe" => $existingPerson[0]->getSexe(),
+				"nom" => $existingPerson[0]->getNom(),
+				"prenom" => $existingPerson[0]->getPrenom(),
+				"date_naissance" => $existingPerson[0]->getDateNaissance(),
+				"date_deces" => $existingPerson[0]->getDateDeces(),
+				"lieu_naissance" => $existingPerson[0]->getLieuNaissance()
+			], JsonResponse::HTTP_CONFLICT);
+		}
 
         $this->entityManager->getRepository(Personne::class)->addAncetors(
             $personId,
@@ -331,7 +350,7 @@ class EditTreeController extends AbstractController
         $userId = $user->getId();
         $userName = $user->getNom();
         //dd($userName);
-            
+
         if (!$user) {
             $cnx = "Connexion";
         } else {
