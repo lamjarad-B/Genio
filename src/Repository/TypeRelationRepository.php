@@ -39,6 +39,14 @@ class TypeRelationRepository extends ServiceEntityRepository
         }
     }
 
+    public function findById(int $id){
+        $qb = $this->createQueryBuilder('r');
+        $qb
+        ->andWhere('r.id = :id')
+            ->setParameter('id', $id);
+        return $qb->getQuery()->getResult();
+    }
+
 //    /**
 //     * @return TypeRelation[] Returns an array of TypeRelation objects
 //     */

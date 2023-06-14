@@ -49,7 +49,7 @@
                     {% else %}
                         <li><a href="{{ path('app_login')}}" class="links">Arbre</a></li>
                     {% endif %}
-                    <li><a href="#" class="links">Mon compte</a></li>
+
                     {% if user is null %}
                     <li><button class="links">
                         
@@ -57,8 +57,10 @@
                     </button></li>
                     {% endif %}
                     {% if user %}
-                    <li><button class="links">
-                        
+                    <li>
+                        <li><a href="#" class="links">Mon compte</a></li>
+                        <button class="links">
+
                         <a href="{{ path('app_logout')}}">{{cnx}}</a>
                     </button></li>
                     {% endif %}

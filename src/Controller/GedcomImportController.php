@@ -1,5 +1,7 @@
 <?php
 namespace App\Controller;
+use App\Entity\Relation;
+use App\Entity\TypeRelation;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use App\Service\FileUploader;
@@ -18,38 +20,43 @@ class GedcomImportController extends AbstractController
     {
         $this->entityManager = $entityManager;
     }
-    
+
     #[Route('/import', name: 'app_import')]
     public function excelCommunesAction(Request $request, FileUploader $file_uploader)
     {
+        $i = 0;
+        $j = 0;
+        $k = 0;
+
         $user = $this->getUser();
+
         if (!$user) {
             $cnx = "Connexion";
         }
         else{
             $cnx = "Déconnexion";
         }
+
+
         $form = $this->createForm(FileUploadType::class);
         $form->handleRequest($request);
         $fileUploaded = false;
-        if ($form->isSubmitted() && $form->isValid())
-        {
+        if ($form->isSubmitted() && $form->isValid()) {
             $file = $form['upload_file']->getData();
-            if ($file)
-            {
+            if ($file) {
                 $fileUploaded = true;
                 $file_name = $file_uploader->upload($file);
                 if (null !== $file_name) // for example
                 {
                     $directory = $file_uploader->getTargetDirectory();
-                    $full_path = $directory.'/'.$file_name;
+                    $full_path = $directory . '/' . $file_name;
                     // Do what you want with the full path file...
                     // Why not read the content or parse it !!!
 
                     //-----------------------DEBUT PARSE DOCUMENT---------------------------------
                     $monFichier = ($full_path);
-                    $buffer=[];
-                    $nameLines= [];
+                    $buffer = [];
+                    $nameLines = [];
                     if (file_exists($monFichier)) {
                         $handle = fopen($monFichier, 'r');
 
@@ -66,29 +73,42 @@ class GedcomImportController extends AbstractController
                             $naissance = [];
                             $birtFound = false;
                             $deathFound = false;
-                            $mort=[];
+                            $mort = [];
                             $mortFormatee = [];
                             $naissanceFormatee = [];
                             $id = [];
-                            $dateNaissanceFormatee=null;
-                            $dateMortFormatee=null;
+                            $dateNaissanceFormatee = null;
+                            $dateMortFormatee = null;
                             $firstDateAfterBirt = null;
                             $dateNaissance = '';
                             $dateMort = '';
-                            $indi=0;
+                            $indi = 0;
                             $essaie = false;
                             $dateFound = false;
 
 
+                            $personne1 = null;
+                            $personne2 = null;
+                            $personne3 = null;
+                            $personne1a = [];
+                            $personne2a = [];
+                            $personne3a = [];
+                            $indi1 = 0;
+                            $husbFound = false;
+                            $wifeFound = false;
+                            $chilFound = false;
+                            $relationMere=null;
+                            $relationPere=null;
+
 
                             //----------------------DEBUT PARSE----------------------------
 
-                            foreach ($buffer as $line => $test){
-                                if(strpos($test, 'INDI')){
+                            foreach ($buffer as $line => $test) {
+                                if (strpos($test, 'INDI')) {
                                     $id[] = trim(str_replace(['INDI', '@'], '', preg_replace('/^0([^0\s]*)/', '$1', $test)));
                                 }
 
-                                if(strpos($test, 'NAME')){
+                                if (strpos($test, 'NAME')) {
                                     $name = trim(str_replace(['NAME', "\n", "\r", 1], '', $test)); // supprime les espaces, les sauts de ligne et les caractères inutiles
                                     $nameParts = explode('/', $name);
                                     if (count($nameParts) > 1) {
@@ -96,18 +116,22 @@ class GedcomImportController extends AbstractController
                                         $lastNames[] = $nameParts[1];
                                     }
                                 }
-                                if(strpos($test, 'SEX')){
+                                if (strpos($test, 'SEX')) {
                                     $sexe[] = trim(str_replace(['SEX', "\n", "\r", " ", "1"], '', $test));
                                 }
 
+
+//----------------------RELATIONS----------------------------
+
+
 //                    ---------------------------TROUVER DATE NAISSANCE ---------------------------------------
 
-                                if(strpos($test, 'BIRT')){
+                                if (strpos($test, 'BIRT')) {
                                     $birtFound = true;
                                 }
-                                if($birtFound && strpos($test, 'DATE')){
+                                if ($birtFound && strpos($test, 'DATE')) {
 
-                                    $naissance[] = trim(str_replace(['2 DATE', "\n", "\r"],'',$test));
+                                    $naissance[] = trim(str_replace(['2 DATE', "\n", "\r"], '', $test));
                                     //Convertie l'Array $naissance en String
                                     $dateNaissanceStr = end($naissance);
 
@@ -142,15 +166,13 @@ class GedcomImportController extends AbstractController
                                         // Si la date n'es pas assez précise, nous instention cette date au 01 JAN
                                         if (strpos($dateNaissanceStr, 'BEF') !== false) {
                                             $dateNaissanceStr = str_replace('BEF', '01 JAN', $dateNaissanceStr);
-                                        }elseif(strpos($dateNaissanceStr, 'ABT') !== false) {
+                                        } elseif (strpos($dateNaissanceStr, 'ABT') !== false) {
                                             $dateNaissanceStr = str_replace('ABT', '01 JAN', $dateNaissanceStr);
-                                        }
-                                        elseif (strpos($dateNaissanceStr, 'BET') !== false) {
+                                        } elseif (strpos($dateNaissanceStr, 'BET') !== false) {
                                             $lastSpace = strrpos($dateNaissanceStr, ' ');
                                             $dateNaissanceStr = substr($dateNaissanceStr, $lastSpace + 1);
                                             $dateNaissanceStr = '01 JAN ' . $dateNaissanceStr;
-                                        }
-                                        else {
+                                        } else {
                                             $dateNaissanceStr = '01 JAN ' . $dateNaissanceStr;
                                         }
                                     }
@@ -158,16 +180,16 @@ class GedcomImportController extends AbstractController
                                     $dateNaissance = DateTime::createFromFormat('j M Y', $dateNaissanceStr);
                                     if ($dateNaissance !== false) {
                                         $dateNaissanceFormatee = $dateNaissance->format('Y-m-d');
-                                        $naissanceFormatee[]=$dateNaissanceFormatee;
+                                        $naissanceFormatee[] = $dateNaissanceFormatee;
                                         $birtFound = false;
-                                    }else{
+                                    } else {
                                     }
                                     $birtFound = false;
                                 }
 
                                 /* -----------------------------------TROUVER MORT -------------------------------------*/
 
-                                if(strpos($test, 'DEAT')){
+                                if (strpos($test, 'DEAT')) {
                                     $deathFound = true;
                                 }
                                 if (strpos($test, 'INDI')) {
@@ -175,11 +197,10 @@ class GedcomImportController extends AbstractController
 
                                 }
 
-                                // var_dump($indiFound);
-                                if($deathFound && strpos($test, 'DATE') && $indi==1){
+                                if ($deathFound && strpos($test, 'DATE') && $indi == 1) {
                                     $dateFound = true;
 
-                                    $mort[] = trim(str_replace(['2 DATE', "\n", "\r"],'',$test));
+                                    $mort[] = trim(str_replace(['2 DATE', "\n", "\r"], '', $test));
                                     //Convertie l'Array $naissance en String
                                     $dateMortStr = end($mort);
 
@@ -209,31 +230,25 @@ class GedcomImportController extends AbstractController
                                     if ($motTrouve) {
                                         if (strpos($dateMortStr, 'BEF') !== false) {
                                             $dateMortStr = str_replace('BEF', '01', $dateMortStr);
-                                        }
-                                        elseif(strpos($dateMortStr, 'ABT') !== false) {
+                                        } elseif (strpos($dateMortStr, 'ABT') !== false) {
                                             $dateMortStr = str_replace('ABT', '01', $dateMortStr);
-                                        }
-                                        elseif(strpos($dateMortStr, 'AFT') !== false){
+                                        } elseif (strpos($dateMortStr, 'AFT') !== false) {
                                             $dateMortStr = str_replace('AFT', '01', $dateMortStr);
                                         }
 
-                                    }else {
+                                    } else {
                                         // Si la date n'es pas assez précise, nous instention cette date au 01 JAN
                                         if (strpos($dateMortStr, 'BEF') !== false) {
                                             $dateMortStr = str_replace('BEF', '01 JAN', $dateMortStr);
-                                        }
-                                        elseif(strpos($dateMortStr, 'ABT') !== false) {
+                                        } elseif (strpos($dateMortStr, 'ABT') !== false) {
                                             $dateMortStr = str_replace('ABT', '01 JAN', $dateMortStr);
-                                        }
-                                        elseif(strpos($dateMortStr, 'AFT') !== false){
+                                        } elseif (strpos($dateMortStr, 'AFT') !== false) {
                                             $dateMortStr = str_replace('AFT', '01 JAN', $dateMortStr);
-                                        }
-                                        elseif (strpos($dateMortStr, 'BET') !== false) {
+                                        } elseif (strpos($dateMortStr, 'BET') !== false) {
                                             $lastSpace = strrpos($dateMortStr, ' ');
                                             $dateMortStr = substr($dateMortStr, $lastSpace + 1);
                                             $dateMortStr = '01 JAN ' . $dateMortStr;
-                                        }
-                                        else {
+                                        } else {
                                             $dateMortStr = '01 JAN ' . $dateMortStr;
                                         }
 
@@ -243,37 +258,33 @@ class GedcomImportController extends AbstractController
                                     $dateMort = DateTime::createFromFormat('j M Y', $dateMortStr);
                                     if ($dateMort !== false) {
                                         $dateMortFormatee = $dateMort->format('Y-m-d');
-                                        $mortFormatee[]=$dateMortFormatee;
+                                        $mortFormatee[] = $dateMortFormatee;
 
 
-                                    }else  {
-                                        $dateMortStr=substr($dateMortStr, -10);
+                                    } else {
+                                        $dateMortStr = substr($dateMortStr, -10);
                                         $dateMort = DateTime::createFromFormat('j M Y', $dateMortStr);
                                         if ($dateMort !== false) {
                                             $dateMortFormatee = $dateMort->format('Y-m-d');
-                                            $mortFormatee[]=$dateMortFormatee;
+                                            $mortFormatee[] = $dateMortFormatee;
                                         }
-                                       // echo $dateMortStr;
                                     }
-                                    $indi=0;
+                                    $indi = 0;
                                     $deathFound = false;
                                     $dateFound = false;
 
-                                }
-
-                                elseif($indi==2 && (!$deathFound || !$dateFound)){
-                                    $indi=1;
-                                    $mort[]='01 JAN 0000';
+                                } elseif ($indi == 2 && (!$deathFound || !$dateFound)) {
+                                    $indi = 1;
+                                    $mort[] = '01 JAN 0000';
                                     $dateMortStr = end($mort);
                                     $dateMort = DateTime::createFromFormat('j M Y', $dateMortStr);
                                     if ($dateMort !== false) {
                                         $dateMortFormatee = $dateMort->format('Y-m-d');
-                                        $mortFormatee[]=$dateMortFormatee;
+                                        $mortFormatee[] = $dateMortFormatee;
 
-                                    }else  {
+                                    } else {
                                     }
                                 }
-
 
 
                             }
@@ -284,14 +295,11 @@ class GedcomImportController extends AbstractController
                                 $dateNaissance = DateTime::createFromFormat('Y-m-d', $naissanceFormatee[$index]);
                                 $dateMort = DateTime::createFromFormat('Y-m-d', $mortFormatee[$index]);
 
+                                $existingPersonne = $personneRepository->findIfExist(
+                                    $id[$index]
+                                );
 
-                               /* $existingPersonne = $personneRepository->findOneBy([
-                                    'prenom' => $firstName,
-                                    'nom' => $lastNames[$index],
-                                    'dateNaissance' => $dateNaissance,
-                                ]);
-
-                                if($existingPersonne === null){*/
+                                if (empty($existingPersonne)) {
                                     $personne = new Personne();
                                     $personne->setPrenom($firstName);
                                     $personne->setNom($lastNames[$index]);
@@ -305,31 +313,133 @@ class GedcomImportController extends AbstractController
                                     $personne->setIdGedcom($id[$index]);
 
                                     $this->entityManager->persist($personne);
+
                                 }
-                          //  }
+                            }
+                            $this->entityManager->flush();
+
+                            $typeRelation = $this->entityManager->getRepository(TypeRelation::class);
+                            $relationPere = $typeRelation->findById(1);
+                            $relationMere = $typeRelation->findById(2);
+                            $relationEnfant = $typeRelation->findById(3);
+                            $relationConjoint = $typeRelation->findById(4);
+
+                            foreach ($buffer as $line => $test) {
+                                // Recherche de HUSB
+                                if (strpos($test, 'HUSB') !== false) {
+                                    $k++;
+                                    $personne1 = trim(str_replace(['1 HUSB', '@'], '', preg_replace('/^1 \(([^)]+)\)/', '$1', $test)));
+                                    $tmp = $personneRepository->findForRelation(
+                                        $personne1
+                                    );
+                                    if (count($tmp) == 1) $personne1a[] = $tmp;//[0]["id"];
+//                                    else continue;
+                                    $indi1++;
+                                }
+// Recherche de WIFE
+                                if (strpos($test, 'WIFE') !== false) {
+                                    $k++;
+                                    $personne2 = trim(str_replace(['1 WIFE',  '@'], '', preg_replace('/^1 \(([^)]+)\)/', '$1', $test)));
+                                    $tmp = $personneRepository->findForRelation(
+                                        $personne2
+                                    );
+                                    if (count($tmp) == 1) $personne2a[] = $tmp;//[0]["id"];
+//                                    else $personne2a[] = "pas de femme";
+                                }
+// Recherche de CHIL
+                                if (strpos($test, 'CHIL') !== false) {
+                                    $k++;
+                                    $personne3 = trim(str_replace(['1 CHIL',  '@'], '', preg_replace('/^1 \(([^)]+)\)/', '$1', $test,1)));
+                                    $tmp = $personneRepository->findForRelation(
+                                        $personne3
+                                    );
+                                    if (count($tmp) == 1) $personne3a[] = $tmp;//[0]["id"];
+//                                    else $personne3a[] = "pas d'enfant";
+                                }
+                            }
+
+                            foreach ($personne1a as $index => $personne1ar) {
+//                                dd($personne1ar);
+                                if (($personne3a[$index][0] != "pas d'enfant" && $personne1a[$index] != "pas de mari")) {
+                                    $relation = new Relation();
+                                    $relation->setPersonne1($this->entityManager->find(Personne::class, $personne1ar[0]));
+                                    $relation->setPersonne2($this->entityManager->find(Personne::class, $personne3a[$index][0]));
+                                    $relation->setRelationType($relationPere[0]);
+                                    $this->entityManager->persist($relation);
+                                }
+                            }
+
+                            foreach ($personne3a as $index => $personne3ar) {
+                                if (!empty($existingPersonne) && ($personne3a[$index][0] != "pas d'enfant" && $personne2a[$index][0] != "pas de femme")) {
+                                    $relation = new Relation();
+                                    $relation->setPersonne1($this->entityManager->find(Personne::class, $personne2a[$index][0]));
+                                    $relation->setPersonne2($this->entityManager->find(Personne::class, $personne3ar[0]));
+                                    $relation->setRelationType($relationMere[0]);
+                                    $this->entityManager->persist($relation);
+                                }
+                            }
+                            foreach ($personne3a as $index => $personne3ar) {
+                                if (!empty($existingPersonne) && ($personne3a[$index][0] != "pas d'enfant" && $personne2a[$index][0] != "pas de femme")) {
+                                    $relation = new Relation();
+                                    $relation->setPersonne1($this->entityManager->find(Personne::class, $personne3ar[0]));
+                                    $relation->setPersonne2($this->entityManager->find(Personne::class, $personne2a[$index][0]));
+                                    $relation->setRelationType($relationEnfant[0]);
+                                    $this->entityManager->persist($relation);
+                                }
+                            }
+                            foreach ($personne1a as $index => $personne1ar) {
+//                                dd($personne1ar);
+                                if (($personne3a[$index][0] != "pas d'enfant" && $personne1a[$index] != "pas de mari")) {
+                                    $relation = new Relation();
+                                    $relation->setPersonne1($this->entityManager->find(Personne::class, $personne3a[$index][0]));
+                                    $relation->setPersonne2($this->entityManager->find(Personne::class, $personne1ar[0]));
+                                    $relation->setRelationType($relationEnfant[0]);
+                                    $this->entityManager->persist($relation);
+                                }
+                            }
+                            foreach ($personne1a as $index => $personne1ar) {
+//                                dd($personne1ar);
+                                if (($personne2a[$index][0] != "pas de femme" && $personne1a[$index] != "pas de mari")) {
+                                    $relation = new Relation();
+                                    $relation->setPersonne1($this->entityManager->find(Personne::class, $personne2a[$index][0]));
+                                    $relation->setPersonne2($this->entityManager->find(Personne::class, $personne1ar[0]));
+                                    $relation->setRelationType($relationConjoint[0]);
+                                    $this->entityManager->persist($relation);
+                                }
+                            }
+                            foreach ($personne1a as $index => $personne1ar) {
+//                                dd($personne1ar);
+                                if (($personne2a[$index][0] != "pas de femme" && $personne1a[$index] != "pas de mari")) {
+                                    $relation = new Relation();
+                                    $relation->setPersonne1($this->entityManager->find(Personne::class, $personne1ar[0]));
+                                    $relation->setPersonne2($this->entityManager->find(Personne::class, $personne2a[$index][0]));
+                                    $relation->setRelationType($relationConjoint[0]);
+                                    $this->entityManager->persist($relation);
+                                }
+                            }
+
                             $this->entityManager->flush();
 
 
                             fclose($handle);
-                        }else{
-                            $buffer[]="pas de liste";
+                        }
+                        else{
+                            $buffer[] = "pas de liste";
                         }
 
-                    }
-                    else{
-                        $buffer[]="fichier non trouvé";
+                    } else {
+                        $buffer[] = "fichier non trouvé";
                         $this->redirectToRoute('app_import');
                     }
 
-                    return $this->render('gedcom_import/index.html.twig' , ['id'=>$id,'firstNames' => $firstNames, 'lastNames'=>$lastNames, 'sexe'=>$sexe,
-                        'naissance'=>$naissanceFormatee, 'mort'=>$mortFormatee, 'form' => $form->createView(), 'fileUploaded' => $fileUploaded,
+                    return $this->render('gedcom_import/index.html.twig', ['id' => $id, 'firstNames' => $firstNames, 'lastNames' => $lastNames, 'sexe' => $sexe,
+                        'naissance' => $naissanceFormatee, 'mort' => $mortFormatee, 'form' => $form->createView(), 'fileUploaded' => $fileUploaded,
+                        'cnx' => $cnx, 'user' => $user
                     ]);
-                }
-                else
-                {
+                } else {
                     // Oups, an error occured !!!
                 }
-               // return $this->redirectToRoute('app_affiche');
+                // return $this->redirectToRoute('app_affiche');
 
             }
         }
@@ -337,7 +447,8 @@ class GedcomImportController extends AbstractController
             'form' => $form->createView(),
             'fileUploaded' => $fileUploaded,
             'cnx' => $cnx,
-            'user' => $user
+            'user' => $user,
+
         ]);
     }
 

@@ -1,14 +1,15 @@
-{% extends 'base.html.twig' %}
+{# {% extends 'base.html.twig' %} #}
 {# templates/app/test-upload.html.twig #}
 {% block content %}
     <link rel="stylesheet" href="/assets/css/import.css">
-    {% block description %}Mettez ici le fichier a importer.{% endblock %}
+    {% block description %}{% endblock %}
 
     <div class="container container-fluid">
         <div class="row">
             <div class="col-lg-8">
+                <p>Mettez ici le fichier a importer.</p>
                 {% if fileUploaded %}
-                    <div class="alert alert-success">Le fichier a été chargé avec succès !</div>
+                    <div class="alert alert-success">Le fichier a été chargé avec succès ! <a href="{{ path('app_home')}}">Pour consulter l'arbre d'un membre de votre famille, rechercher la personne que vous voulez.</a></div>
                     {{ form_start(form, { attr: { 'accept-charset' : 'utf-8' }}) }}
                     <div class="form-group">
                         {{ form_label(form.upload_file) }}
@@ -36,6 +37,7 @@
                                 <td>{{ naissance[loop.index0] }}</td><td>{{ mort[loop.index0] }}</td></tr>
                         {% endfor %}
                     </table>
+
 
 
                 {% else %}
