@@ -63,6 +63,33 @@
 }
 }
 
+#editTreeButton{
+  @include button(auto, .5rem 1rem);
+  @include animButton(rgba(191, 10, 53, .9), #bf0a35, #e31b4b, #f03763);
+  a{
+    text-decoration: none;
+    color: white;
+  }
+}
+#addButton{
+  @include button(auto, .3rem .5rem);
+  @include animButton(rgba(0, 128, 0, .9), #00b300, #00cc00, #00e600);
+  display: inline-block;
+  font-size: 1rem;
+}
+#editButton{
+  @include button(auto, .3rem .5rem);
+  @include animButton(rgba(255, 165, 0, .9), #ffb833, #ffc14d, #ffc966);
+  display: inline-block;
+  font-size: 1rem;
+}
+.deleteAncetors{
+  input[name="deleteAncetors"]{
+  @include button(auto, .3rem .5rem);
+  @include animButton(rgba(255, 0, 0, .9), #ff3333, #ff4d4d, #ff6666);
+  font-size: 1rem;
+  }
+}
 #createTree{
   display: flex;
   justify-content: space-between;

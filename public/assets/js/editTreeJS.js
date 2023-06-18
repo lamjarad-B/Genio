@@ -89,43 +89,108 @@ $( document ).ready( function ()
 			}
 
 			const parent = form.parent();
-			const length = parent.children().length === 2;
-			const container = length ? parent.parent() : parent;
+			const parentId = parent.prev().attr( "data-id" );
 
-			if ( length )
+			function html( content )
 			{
-				parent.remove();
+				if ( data.idMere )
+				{
+					parent.prev().prev().prev().html( content );
+				}
+				else
+				{
+					parent.prev().html( content );
+				}
 			}
-			else
-			{
-				container.find( "button#addButton" ).remove(); // Bouton "Ajouter"
-				container.find( "button#editButton" ).remove(); // Bouton "Modifier"
 
-				container.find( "form.deleteAncetors" ).remove(); // Formulaire de suppression
-				container.find( "form.addAncetors" ).remove(); // Formulaire d'ajout
-				container.find( "form.editAncetors" ).remove(); // Formulaire de modification
+			html( `
+				<ul class="ancetors">
+					<button id="editButton">Modifier</button>
+
+					<form class="deleteAncetors" data-id="${ parentId }">
+						<input type="submit" name="deleteAncetors" value="Supprimer">
+					</form>
+
+					<form class="editAncetors" data-id="${ parentId }">
+						<div>
+							<label for="nom">Nom:</label>
+							<input type="text" id="nom" name="nom" value="" ><br>
+
+							<label for="prenom">Prénom:</label>
+							<input type="text" id="prenom" name="prenom" value="" ><br>
+
+							<label for="date_naissance">Date de naissance:</label>
+							<input type="date" id="date_naissance" name="date_naissance" value=""><br>
+
+							<label for="date_deces">Date de décès:</label>
+							<input type="date" id="date_deces" name="date_deces" value=""><br>
+
+							<label for="lieu_naissance">Lieu de naissance:</label>
+							<input type="text" id="lieu_naissance" name="lieu_naissance" value=""><br>
+						</div>
+
+						<input type="submit" name="editAncetors" value="Modifier">
+					</form>
+				</ul>
+			` );
+
+			const container1 = parent.prev().find( "ul" );
+			const container2 = parent.prev();
+
+			function ajout( content )
+			{
+				if ( pere_prenom && mere_prenom )
+				{
+					container1.append( content );
+				}
+				else
+				{
+					container2.after( content );
+				}
 			}
 
 			if ( pere_prenom )
 			{
-				container.prepend( `
-					<li>
+				ajout( `
+					<li data-id="${ data[ "idPere" ] }">
 						<strong>Père</strong>
 
-						` + pere_nom + ` ` + pere_prenom + ` (M)
+						${ pere_nom } ${ pere_prenom } (M)
 
-						<em>(` + pere_date_naissance + `)</em>
+						<em>(${ pere_date_naissance })</em>
 					</li>
 
 					<ul class="ancetors">
-						<button id="addButton">Ajouter</button>
 						<button id="editButton">Modifier</button>
 
-						<form class="deleteAncetors" data-id="` + data[ "idPere" ] + `">
+						<form class="deleteAncetors" data-id="${ data[ "idPere" ] }">
 							<input type="submit" name="deleteAncetors" value="Supprimer">
 						</form>
 
-						<form class="addAncetors" data-id="` + data[ "idPere" ] + `">
+						<form class="editAncetors" data-id="${ data[ "idPere" ] }">
+							<div>
+								<label for="nom">Nom:</label>
+								<input type="text" id="nom" name="nom" value="${ pere_nom }" ><br>
+
+								<label for="prenom">Prénom:</label>
+								<input type="text" id="prenom" name="prenom" value="${ pere_prenom }" ><br>
+
+								<label for="date_naissance">Date de naissance:</label>
+								<input type="date" id="date_naissance" name="date_naissance" value="${ pere_date_naissance }"><br>
+
+								<label for="date_deces">Date de décès:</label>
+								<input type="date" id="date_deces" name="date_deces" value="${ pere_date_deces }"><br>
+
+								<label for="lieu_naissance">Lieu de naissance:</label>
+								<input type="text" id="lieu_naissance" name="lieu_naissance" value="${ pere_lieu_naissance }"><br>
+							</div>
+
+							<input type="submit" name="editAncetors" value="Modifier">
+						</form>
+
+						<button id="addButton">Ajouter</button>
+
+						<form class="addAncetors" data-id="${ data[ "idPere" ] }">
 							<div>
 								<h2>Père</h2>
 
@@ -165,27 +230,6 @@ $( document ).ready( function ()
 							</div>
 
 							<input type="submit" name="addAncetors" value="Envoyer">
-						</form>
-
-						<form class="editAncetors" data-id="` + data[ "idPere" ] + `">
-							<div>
-								<label for="nom">Nom:</label>
-								<input type="text" id="nom" name="nom" value="` + pere_nom + `" ><br>
-
-								<label for="prenom">Prénom:</label>
-								<input type="text" id="prenom" name="prenom" value="` + pere_prenom + `" ><br>
-
-								<label for="date_naissance">Date de naissance:</label>
-								<input type="date" id="date_naissance" name="date_naissance" value="` + pere_date_naissance + `"><br>
-
-								<label for="date_deces">Date de décès:</label>
-								<input type="date" id="date_deces" name="date_deces" value="` + pere_date_deces + `"><br>
-
-								<label for="lieu_naissance">Lieu de naissance:</label>
-								<input type="text" id="lieu_naissance" name="lieu_naissance" value="` + pere_lieu_naissance + `"><br>
-							</div>
-
-							<input type="submit" name="editAncetors" value="Modifier">
 						</form>
 					</ul>
 				`);
@@ -193,24 +237,46 @@ $( document ).ready( function ()
 
 			if ( mere_prenom )
 			{
-				container.append( `
-					<li>
-						<strong>Mère</strong> +
+				ajout( `
+					<li data-id="${ data[ "idMere" ] }">
+						<strong>Mère</strong>
 
-						` + mere_nom + ` ` + mere_prenom + ` (F)
+						${ mere_nom } ${ mere_prenom } (F)
 
-						<em>(` + mere_date_naissance + `)</em>
+						<em>(${ mere_date_naissance })</em>
 					</li>
 
 					<ul class="ancetors">
-						<button id="addButton">Ajouter</button>
 						<button id="editButton">Modifier</button>
 
-						<form class="deleteAncetors" data-id="` + data[ "idMere" ] + `">
+						<form class="deleteAncetors" data-id="${ data[ "idMere" ] }">
 							<input type="submit" name="deleteAncetors" value="Supprimer">
 						</form>
 
-						<form class="addAncetors" data-id="` + data[ "idMere" ] + `">
+						<form class="editAncetors" data-id="${ data[ "idMere" ] }">
+							<div>
+								<label for="nom">Nom:</label>
+								<input type="text" id="nom" name="nom" value="${ mere_nom }" ><br>
+
+								<label for="prenom">Prénom:</label>
+								<input type="text" id="prenom" name="prenom" value="${ mere_prenom }" ><br>
+
+								<label for="date_naissance">Date de naissance:</label>
+								<input type="date" id="date_naissance" name="date_naissance" value="${ mere_date_naissance }"><br>
+
+								<label for="date_deces">Date de décès:</label>
+								<input type="date" id="date_deces" name="date_deces" value="${ mere_date_deces }"><br>
+
+								<label for="lieu_naissance">Lieu de naissance:</label>
+								<input type="text" id="lieu_naissance" name="lieu_naissance" value="${ mere_lieu_naissance }"><br>
+							</div>
+
+							<input type="submit" name="editAncetors" value="Modifier">
+						</form>
+
+						<button id="addButton">Ajouter</button>
+
+						<form class="addAncetors" data-id="${ data[ "idMere" ] }">
 							<div>
 								<h2>Père</h2>
 
@@ -251,32 +317,19 @@ $( document ).ready( function ()
 
 							<input type="submit" name="addAncetors" value="Envoyer">
 						</form>
-
-						<form class="editAncetors" data-id="` + data[ "idMere" ] + `">
-							<div>
-								<label for="nom">Nom:</label>
-								<input type="text" id="nom" name="nom" value="` + mere_nom + `" ><br>
-
-								<label for="prenom">Prénom:</label>
-								<input type="text" id="prenom" name="prenom" value="` + mere_prenom + `" ><br>
-
-								<label for="date_naissance">Date de naissance:</label>
-								<input type="date" id="date_naissance" name="date_naissance" value="` + mere_date_naissance + `"><br>
-
-								<label for="date_deces">Date de décès:</label>
-								<input type="date" id="date_deces" name="date_deces" value="` + mere_date_deces + `"><br>
-
-								<label for="lieu_naissance">Lieu de naissance:</label>
-								<input type="text" id="lieu_naissance" name="lieu_naissance" value="` + mere_lieu_naissance + `"><br>
-							</div>
-
-							<input type="submit" name="editAncetors" value="Modifier">
-						</form>
 					</ul>`
 				);
 			}
 
-			$( "form.addAncetors" ).submit( actionAjout );
+			parent.remove();
+
+			$( "form.addAncetors" ).off( "submit", actionAjout );
+			$( "form.editAncetors" ).off( "submit", actionEdit );
+			$( "form.deleteAncetors" ).off( "submit", actionDelete );
+
+			$( "form.addAncetors" ).on( "submit", actionAjout );
+			$( "form.editAncetors" ).on( "submit", actionEdit );
+			$( "form.deleteAncetors" ).on( "submit", actionDelete );
 		} ).catch( function ( error )
 		{
 			console.log( error );
@@ -285,7 +338,7 @@ $( document ).ready( function ()
 		return false;
 	}
 
-	$( "form.addAncetors" ).submit( actionAjout );
+	$( "form.addAncetors" ).on( "submit", actionAjout );
 
 	// Éditer une personne
 	function actionEdit( event )
@@ -317,9 +370,10 @@ $( document ).ready( function ()
 			// Deuxième parent <ul> de classe "ancetors" ayant un élément <li> avec les informations de la personne.
 			const element = form.parent().parent().find( "li[data-id=" + form.attr( "data-id" ) + "]" );
 			const isPere = element.html().includes( "Père" );
+			const isMere = element.html().includes( "Mère" );
 
 			form.parent().parent().find( "li[data-id=" + form.attr( "data-id" ) + "]" ).html( `
-				<strong>` + ( isPere ? "Père" : "Mère" ) + `</strong>
+				<strong>` + ( isPere ? "Père" : ( isMere ? "Mère" : "" ) ) + `</strong>
 
 				` + nom + ` ` + prenom + ` (M)
 
@@ -336,7 +390,7 @@ $( document ).ready( function ()
 		return false;
 	}
 
-	$( "form.editAncetors" ).submit( actionEdit );
+	$( "form.editAncetors" ).on( "submit", actionEdit );
 
 	// Supprimer une personne
 	function actionDelete( event )
@@ -355,31 +409,21 @@ $( document ).ready( function ()
 			} )
 		} ).then( function ()
 		{
-			const container = form.parent().parent();
+			const container = form.parent();
+			const parent = container.parent();
+			const parentId = parent.prev().attr( "data-id" );
 
-			const isPere = container.find( "li[data-id=" + form.attr( "data-id" ) + "]" ).html().includes( "Père" ); // Vérification si la personne est un père ou une mère.
-			container.find( "li[data-id=" + form.attr( "data-id" ) + "]" ).remove(); // Suppression de l'élément <li> contenant les informations de la personne.
+			// Ajout du nouveau formulaire d'ajout de parents (père ou mère).
+			const isPere = container.prev().html().includes( "Père" );
 
-			form.prev( "button#addButton" ).remove(); // Suppression du bouton "Ajouter" précédant le formulaire.
-			form.prev( "button#editButton" ).remove(); // Suppression du bouton "Modifier" précédant le formulaire.
-
-			const parentId = container.parent().children().first().attr( "data-id" );
-			form.next().attr( "data-id", parentId ); // Modification de l'attribut "data-id" du formulaire d'ajout.
-
-			if ( isPere ) form.next().children().first().next().remove(); // Suppression du formulaire du père.
-			else form.next().children().first().remove(); // Suppression du formulaire de la mère.
-
-			form.next().next().remove(); // Suppression du formulaire de modification.
-
-			form.remove(); // Suppression du formulaire de suppression.
-
-			if ( container.children().length === 2 )
+			if ( isPere )
 			{
-				$( `
+				// Ajout d'un nouveau père.
+				container.prev().prev().after( `
 					<ul class="ancetors">
 						<button id="addButton">Ajouter</button>
 
-						<form class="addAncetors" data-id="` + parentId + `">
+						<form class="addAncetors" data-id="${ parentId }">
 							<div>
 								<h2>Père</h2>
 
@@ -399,6 +443,19 @@ $( document ).ready( function ()
 								<input type="text" id="pere_lieu_naissance" name="pere_lieu_naissance" required><br>
 							</div>
 
+							<input type="submit" name="addAncetors" value="Envoyer">
+						</form>
+					</ul>
+				`);
+			}
+			else
+			{
+				// Ajout d'une nouvelle mère.
+				container.prev().prev().after( `
+					<ul class="ancetors">
+						<button id="addButton">Ajouter</button>
+
+						<form class="addAncetors" data-id="${ parentId }">
 							<div>
 								<h2>Mère</h2>
 
@@ -421,10 +478,74 @@ $( document ).ready( function ()
 							<input type="submit" name="addAncetors" value="Envoyer">
 						</form>
 					</ul>
-				`).insertAfter( container.parent().children().first() );
-
-				container.remove();
+				`);
 			}
+
+			container.prev().remove(); // Suppression du <li> avec les informations de la personne.
+
+			// Suppression du <ul> contenant les formulaires et boutons.
+			container.remove();
+
+			if ( parent.find( "li" ).length === 0 )
+			{
+				// Suppression du conteneur parent si les deux parents ont été supprimés..
+				parent.find( "ul" ).remove();
+
+				// Ajout du nouveau bouton d'ajout de parents.
+				parent.find( "form.editAncetors" ).after( `
+					<button id="addButton">Ajouter</button>
+
+					<form class="addAncetors" data-id="${ parentId }">
+						<div>
+							<h2>Père</h2>
+
+							<label for="pere_nom">Nom:</label>
+							<input type="text" id="pere_nom" name="pere_nom" required><br>
+
+							<label for="pere_prenom">Prénom:</label>
+							<input type="text" id="pere_prenom" name="pere_prenom" required><br>
+
+							<label for="pere_date_naissance">Date de naissance:</label>
+							<input type="date" id="pere_date_naissance" name="pere_date_naissance" required><br>
+
+							<label for="pere_date_deces">Date de décès:</label>
+							<input type="date" id="pere_date_deces" name="pere_date_deces" required><br>
+
+							<label for="pere_lieu_naissance">Lieu de naissance:</label>
+							<input type="text" id="pere_lieu_naissance" name="pere_lieu_naissance" required><br>
+						</div>
+
+						<div>
+							<h2>Mère</h2>
+
+							<label for="mere_nom">Nom:</label>
+							<input type="text" id="mere_nom" name="mere_nom" required><br>
+
+							<label for="mere_prenom">Prénom:</label>
+							<input type="text" id="mere_prenom" name="mere_prenom" required><br>
+
+							<label for="mere_date_naissance">Date de naissance:</label>
+							<input type="date" id="mere_date_naissance" name="mere_date_naissance" required><br>
+
+							<label for="mere_date_deces">Date de décès:</label>
+							<input type="date" id="mere_date_deces" name="mere_date_deces" required><br>
+
+							<label for="mere_lieu_naissance">Lieu de naissance:</label>
+							<input type="text" id="mere_lieu_naissance" name="mere_lieu_naissance" required><br>
+						</div>
+
+						<input type="submit" name="addAncetors" value="Envoyer">
+					</form>
+				`);
+			}
+
+			$( "form.addAncetors" ).off( "submit", actionAjout );
+			$( "form.editAncetors" ).off( "submit", actionEdit );
+			$( "form.deleteAncetors" ).off( "submit", actionDelete );
+
+			$( "form.addAncetors" ).on( "submit", actionAjout );
+			$( "form.editAncetors" ).on( "submit", actionEdit );
+			$( "form.deleteAncetors" ).on( "submit", actionDelete );
 		} ).catch( function ( error )
 		{
 			console.log( error );
@@ -433,5 +554,5 @@ $( document ).ready( function ()
 		return false;
 	}
 
-	$( "form.deleteAncetors" ).submit( actionDelete );
+	$( "form.deleteAncetors" ).on( "submit", actionDelete );
 } );

@@ -1,4 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Raleway:wght@100;200;300;400;500;600;700;800;900&display=swap');
+@import "valeurs-globales";
+@import "mixin";
 
 * {
   box-sizing: border-box;
@@ -116,6 +118,8 @@ button:hover {
 .nav > #nav-check {
   display: none;
 }
+
+
 
 // .nav-header{
 //   margin-right: -10rem;
