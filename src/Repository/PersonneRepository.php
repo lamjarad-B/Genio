@@ -30,6 +30,22 @@ class PersonneRepository extends ServiceEntityRepository
         return $repository->findOneBy($criteria, $orderBy);
     }
 
+    public function findIfExist(?string $id, ){
+        $qb = $this->createQueryBuilder('p');
+        $qb ->andWhere('p.idGedcom = :idGedcom')
+            ->setParameter('idGedcom', $id);
+
+        return  $qb->getQuery()->getResult();
+
+    }
+    public function findForRelation(?string $id) {
+        $qb = $this->createQueryBuilder('p');
+        $qb//->select('p.id')
+            ->andWhere('p.idGedcom = :idGedcom')
+            ->setParameter('idGedcom', $id);
+        return $qb->getQuery()->getResult();
+    }
+
 
 
     public function findBySearchCriteria(object $criteria, ?string $nomConjoint, ?string $prenomConjoint, ?int $limit = null)
