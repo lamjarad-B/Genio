@@ -9,14 +9,14 @@
     {% endif %}
 
 	<h2>Conjoint(e)</h2>
-	{% if conjoint != false %}
-		<p><strong>{{ conjoint.nom }} {{ conjoint.prenom }}, </strong> Date de naissance: {{ conjoint.date_naissance|date('d/m/Y') }} 
+	{% if conjoint == 1 %}
+		<p><strong>{{ conjoint.nom }} {{ conjoint.prenom }}, </strong> Date de naissance: {{ conjoint.date_naissance|date('d/m/Y') }}
 		{% if personne.dateDeces is not null %}
-        	<p>Date de décès : {{ conjoint.dateDeces|date('d/m/Y') }}</p>
+			<p>Date de décès : {{ conjoint.date_deces|date('d/m/Y') }}</p>
 		{% endif %}
-    {% endif %}
+		</p>
 
-	{% if conjoint == false %}
+	{% else %}
 		<p>Pas de conjoint(e) trouvé(e)</p>
 	{% endif %}
 
@@ -124,6 +124,6 @@
 
 	{# Si on est connecté, on devrait pouvoir editer notre arbre #}
 	{% if user is not null %}
-		<button><a href="{{ path('app_edit_tree')}}">Editer votre arbre</a></button>
+		<button id="editTreeButton"><a href="{{ path('app_edit_tree')}}">Editer votre arbre</a></button>
 	{% endif %}
 {% endblock %}

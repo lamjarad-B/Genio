@@ -70,6 +70,12 @@ class EditTreeController extends AbstractController
 
         $conjoint = $results->fetch();
 
+        // if($conjoint){
+        //     $conjoint == 1;
+        // }
+        // else{
+        //     $conjoint == 0;
+        // }
 
         // Afiicher les frères et soeurs
 
@@ -136,6 +142,12 @@ class EditTreeController extends AbstractController
                 $siblings = (object)$siblings;
             }
 
+            // if($siblings){
+            //     $siblings == 1;
+            // }
+            // else{
+            //     $siblings == 0;
+            // }
             // AFFicher les enfants
 
             $query = "
@@ -162,6 +174,13 @@ class EditTreeController extends AbstractController
             $results = $conn->executeQuery($query, $params);
             $children = $results->fetchAllAssociative();
 
+            if($children){
+                $children == 1;
+            }
+            else{
+                $children == 0;
+            }
+
         return $this->render('edit_tree/index.html.twig', [
              'personne' => $personne,
              'ancestors' => $ancestors,
@@ -169,7 +188,7 @@ class EditTreeController extends AbstractController
              'cnx' => $cnx,
              'user' => $user,
              'userName' => $userName,
-             'conjoint' => @$conjoint,
+             'conjoint' => $conjoint,
              'siblings' => $siblings,
              'children' => $children
         ]);

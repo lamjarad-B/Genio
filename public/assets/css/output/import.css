@@ -1,10 +1,14 @@
-
-.container {
+@import "valeurs-globales";
+@import "mixin";
+/* .container {
     max-width: 800px;
     margin: 0 auto;
     padding: 20px;
+} */
+.container-fluid{
+    width: 60%;
+    margin: 10rem auto;
 }
-
 .alert {
     padding: 15px;
     margin-bottom: 20px;
@@ -18,7 +22,7 @@
     color: #3c763d;
 }
 
-.form-group {
+/* .form-group {
     margin-bottom: 20px;
 }
 
@@ -64,7 +68,10 @@ header h2 {
 header p {
     font-size: 16px;
     margin-top: 10px;
-}
+} */
+
+#file_upload_send{
+    margin-top: 1rem;
 
 table {
     width: 100%;

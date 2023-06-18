@@ -1,10 +1,5 @@
-<!DOCTYPE HTML>
-<html>
-<head>
-    <title>Afficher gedcom</title>
-    <meta charset="utf-8">
-</head>
-<body>
+{% extends 'base.html.twig' %}
+{% block content %}
 <div id="page">
     <header>
         <h2>Affichage arbre généalogique</h2>
@@ -20,8 +15,4 @@
         {% endfor %}
     </table>
 
-
-
-</div>
-</body>
-</html>
+{% endblock %}

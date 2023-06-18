@@ -85,6 +85,96 @@
   background: linear-gradient(#bf0a35 0%, #e31b4b 47%, #f03763 100%);
 }
 
+#editTreeButton {
+  /* Style général des bouttons */
+  padding: 0.5rem 1rem;
+  border-radius: .25rem;
+  width: auto;
+  display: block;
+  /* animation des bouttons */
+  font-size: 1.1rem;
+  background-color: rgba(191, 10, 53, 0.9);
+  border: solid 1px #BCA474;
+  color: white;
+  cursor: pointer;
+}
+
+#editTreeButton:hover {
+  background: -webkit-linear-gradient(#bf0a35 0%, #e31b4b 47%, #f03763 100%);
+  background: -o-linear-gradient(#bf0a35 0%, #e31b4b 47%, #f03763 100%);
+  background: linear-gradient(#bf0a35 0%, #e31b4b 47%, #f03763 100%);
+}
+
+#editTreeButton a {
+  text-decoration: none;
+  color: white;
+}
+
+#addButton {
+  /* Style général des bouttons */
+  padding: 0.3rem 0.5rem;
+  border-radius: .25rem;
+  width: auto;
+  display: block;
+  /* animation des bouttons */
+  font-size: 1.1rem;
+  background-color: rgba(0, 128, 0, 0.9);
+  border: solid 1px #BCA474;
+  color: white;
+  cursor: pointer;
+  display: inline-block;
+  font-size: 1rem;
+}
+
+#addButton:hover {
+  background: -webkit-linear-gradient(#00b300 0%, #00cc00 47%, #00e600 100%);
+  background: -o-linear-gradient(#00b300 0%, #00cc00 47%, #00e600 100%);
+  background: linear-gradient(#00b300 0%, #00cc00 47%, #00e600 100%);
+}
+
+#editButton {
+  /* Style général des bouttons */
+  padding: 0.3rem 0.5rem;
+  border-radius: .25rem;
+  width: auto;
+  display: block;
+  /* animation des bouttons */
+  font-size: 1.1rem;
+  background-color: rgba(255, 165, 0, 0.9);
+  border: solid 1px #BCA474;
+  color: white;
+  cursor: pointer;
+  display: inline-block;
+  font-size: 1rem;
+}
+
+#editButton:hover {
+  background: -webkit-linear-gradient(#ffb833 0%, #ffc14d 47%, #ffc966 100%);
+  background: -o-linear-gradient(#ffb833 0%, #ffc14d 47%, #ffc966 100%);
+  background: linear-gradient(#ffb833 0%, #ffc14d 47%, #ffc966 100%);
+}
+
+.deleteAncetors input[name="deleteAncetors"] {
+  /* Style général des bouttons */
+  padding: 0.3rem 0.5rem;
+  border-radius: .25rem;
+  width: auto;
+  display: block;
+  /* animation des bouttons */
+  font-size: 1.1rem;
+  background-color: rgba(255, 0, 0, 0.9);
+  border: solid 1px #BCA474;
+  color: white;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.deleteAncetors input[name="deleteAncetors"]:hover {
+  background: -webkit-linear-gradient(#ff3333 0%, #ff4d4d 47%, #ff6666 100%);
+  background: -o-linear-gradient(#ff3333 0%, #ff4d4d 47%, #ff6666 100%);
+  background: linear-gradient(#ff3333 0%, #ff4d4d 47%, #ff6666 100%);
+}
+
 #createTree {
   display: flex;
   justify-content: space-between;

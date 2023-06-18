@@ -19,3 +19,11 @@ form.addPartner {
 .deleteAncetors {
   display: inline-block;
 }
+
+.ancetors li {
+  font-size: 1.2rem;
+}
+
+h2 + ul li {
+  font-size: 1.2rem;
+}

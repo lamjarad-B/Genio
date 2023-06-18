@@ -217,8 +217,8 @@ class PersonneRepository extends ServiceEntityRepository
     }
 
 	public function checkPerson(
-        string $nom,
-        string $prenom,
+        ?string $nom,
+        ?string $prenom,
         ?DateTime $date_naissance,
         ?DateTime $date_deces,
         ?string $lieu_naissance,
