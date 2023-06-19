@@ -112,6 +112,24 @@ button:hover {
   display: none;
 }
 
+footer .footer {
+  margin-top: 4rem;
+  background-color: #333a40;
+  padding: 1.5rem;
+  margin: 7rem -7rem 0 -7rem;
+  text-align: center;
+}
+
+footer .footer b {
+  color: #969696;
+  font-size: 15px;
+}
+
+footer .footer i {
+  color: #969696;
+  font-size: 13px;
+}
+
 @media (max-width: 785px) {
   .nav > .nav-btn {
     display: inline-block;

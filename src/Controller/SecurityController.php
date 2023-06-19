@@ -14,7 +14,9 @@ class SecurityController extends AbstractController
     {
         
         if ($this->getUser()) {
-            return $this->redirectToRoute('app_home');
+            if ($this->getUser()) { 
+                return $this->redirectToRoute($this->isGranted("ROLE_USER") ? "app_arbre" : "admin");
+            }
             $cnx = "Déconnexion";
         }
         $user = $this->getUser();

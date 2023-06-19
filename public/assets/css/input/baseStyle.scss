@@ -10,6 +10,9 @@
 body {
   background: #F6F6F6;
   margin: 3rem 7rem 0 7rem;
+  // min-height:100vh; /* 1 */
+	// display:flex; /* 2 */
+	// flex-direction:column; /* 3 */
 }
 
 // form {
@@ -118,7 +121,27 @@ button:hover {
 .nav > #nav-check {
   display: none;
 }
-
+footer{
+  
+  
+  
+.footer{
+  //display: flex;
+  //flex-direction: column;
+  margin-top: 4rem;background-color:rgb(51, 58, 64);
+  padding: 1.5rem;
+  margin: 7rem -7rem 0 -7rem;
+  text-align: center;
+  b{
+      color: rgb(150, 150, 150);
+      font-size: 15px;
+  }
+  i{
+      color: rgb(150, 150, 150);
+      font-size: 13px;
+  }
+}
+}
 
 
 // .nav-header{

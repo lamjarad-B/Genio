@@ -93,13 +93,13 @@ $( document ).ready( function ()
 
 			function html( content )
 			{
-				if ( data.idMere )
+				if ( data.idMere && !data.idPere )
 				{
 					parent.prev().prev().prev().html( content );
 				}
 				else
 				{
-					parent.prev().html( content );
+					parent.prev().append( content );
 				}
 			}
 

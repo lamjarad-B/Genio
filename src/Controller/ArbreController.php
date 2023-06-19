@@ -107,7 +107,10 @@ class ArbreController extends AbstractController
 
         $results = $conn->executeQuery($pere, $params);
         $personne1_id = $results->fetchAssociative();
-        $personne1_id = $personne1_id['pere_id'];
+        if($personne1_id){
+            $personne1_id = $personne1_id['pere_id'];
+        }
+        
 
         // 2 On récupère le mère du personId et on le stock dans personne2_id
         $mere = "
@@ -124,7 +127,9 @@ class ArbreController extends AbstractController
 
         $results = $conn->executeQuery($mere, $params);
         $personne2_id = $results->fetchAssociative();
-        $personne2_id = $personne2_id['mere_id'];
+        if($personne2_id){
+            $personne2_id = $personne2_id['mere_id'];
+        }
 
         // 3 On récupère les frères et soeurs
         $sql = "SELECT * 

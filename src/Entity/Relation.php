@@ -65,4 +65,8 @@ class Relation
 
         return $this;
     }
+
+    public function __toString(){ 
+        return $this->getRelationType();
+    }
 }
